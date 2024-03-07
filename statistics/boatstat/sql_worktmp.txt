@@ -1,0 +1,145 @@
+insert into rec_race_tp
+select * from rec_race
+where
+ ( (alevelcount <= 2 and substring(wakulevellist from 1 for 1) = 'A' )
+     or (racetype like '%%èÄóDèü%%')
+     or (fixedentrance = 'êiì¸å≈íË')
+ )
+;
+
+select 
+ sum (
+   case tansyono
+     when zen.kumiban then 100
+     else 100
+   end
+ ) betamount,
+ sum (
+   case tansyono
+     when zen.kumiban then tansyoprize
+     else 0
+   end
+ ) income,
+ sum (
+   case tansyono
+     when zen.kumiban then tansyoprize - 100
+     else -100
+   end
+ ) balance
+from rec_race race, zen_filter zen
+where race.ymd >= '20170726' and race.ymd <= '20180725'
+  and (race.jyocd || race.nationwiningrank) = zen.pattern
+  and zen.kumiban = '1'
+  and substring(nationwiningrank from 1 for 1) in ('1', '2')
+--  group by jyocd
+-- order by ymd
+;
+
+
+
+
+select
+
+select * into tmp_stat_result_1T from stat_result_tmp where bettype = '1T';
+select * into tmp_stat_result_2T from stat_result_tmp where bettype = '2T';
+select * into tmp_stat_result_2F from stat_result_tmp where bettype = '2F';
+select * into tmp_stat_result_3TT from stat_result_tmp where bettype = '3T';
+select * into tmp_stat_result_3F from stat_result_tmp where bettype = '3F';
+
+select 
+  bettype, count(*) 
+from stat_result_tmp
+group by bettype;
+select *
+from tmp_stat_result_1T
+where
+patterncnt > 10 
+and hitrate > 0.5
+and incomerate > 1
+order by hitrate desc;
+
+select 
+  bettype, count(*) 
+from stat_result_tmp
+group by bettype;
+2018-07-22 19:09:07,084 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,20180722190980,20170705,stat_1T.properties,9,13,20,192280,974,56,92
+
+
+2018-07-22 19:29:19,150 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807221929142,20170705,stat_1T.properties,9,3,180,195094,338,39,84
+
+2018-07-22 19:33:04,438 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807221933429,20170705,stat_1T.properties,9,3,-170,198794,338,49,96
+
+2018-07-22 19:39:27,821 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807221939813,20170705,stat_1T.properties,9,8,-61,199246,332,56,96
+
+2018-07-22 19:43:00,405 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807221943397,20170705,stat_1T.properties,9,5,-370,196763,338,39,93
+
+
+2018-07-22 19:52:04,718 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807221952710,20170705,stat_1T.properties,9,7,219,201625,307,54,106 
+minPatternCnt=10
+minHitRate=0.5
+minIncomeRate=1.2
+
+2018-07-22 19:53:46,754 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807221953743,20170705,stat_1T.properties,9,7,219,198622,478,55,96
+minPatternCnt=10
+minHitRate=0.5
+minIncomeRate=1.1
+
+2018-07-22 19:55:24,328 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807221955320,20170705,stat_1T.properties,9,7,69,199766,516,67,102
+minPatternCnt=10
+minHitRate=0.6
+minIncomeRate=1
+
+2018-07-22 19:56:32,091 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,20180722195683,20170705,stat_1T.properties,9,6,-31,198827,298,61,99
+minPatternCnt=10
+minHitRate=0.6
+minIncomeRate=1.1
+
+------------------
+3T
+2018-07-22 21:52:27,907 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807222152895,20170625,stat_3T.properties,13,16,-1600,174600,515,3,51
+miniAverageIncomeRate=0.5
+minPatternCnt=12
+minHitRate=0.15
+minIncomeRate=1
+
+
+------------------
+2T
+2018-07-22 23:30:02,962 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807222330958,20170705,stat_2T.properties,9,7,-50,185791,542,23,74
+miniAverageIncomeRate=0.1
+minPatternCnt=12
+minHitRate=0.15
+minIncomeRate=1
+
+
+
+
+
+
+
+
+
+2018-07-23 00:04:16,734 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230004730,20170705,stat_1T.properties,9,5,-1700,221300,385,54,105
+
+
+
+2018-07-23 00:22:10,381 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022370,20170505,stat_1T.properties,19,1,800,200800,1,100,180
+2018-07-23 00:22:11,252 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022240,20170506,stat_1T.properties,17,1,200,201000,2,100,160
+2018-07-23 00:22:12,196 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022187,20170507,stat_1T.properties,19,2,900,201900,4,100,152
+2018-07-23 00:22:12,663 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022655,20170508,stat_1T.properties,12,2,1100,203000,6,100,151
+2018-07-23 00:22:13,165 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022155,20170509,stat_1T.properties,9,0,0,203000,6,100,151
+2018-07-23 00:22:13,684 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022651,20170510,stat_1T.properties,11,1,1000,204000,7,100,152
+2018-07-23 00:22:14,423 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022404,20170511,stat_1T.properties,11,0,0,204000,7,100,153
+2018-07-23 00:22:14,896 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022889,20170512,stat_1T.properties,12,1,1100,205100,8,100,155
+2018-07-23 00:22:15,614 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022604,20170513,stat_1T.properties,15,0,0,205100,8,100,156
+2018-07-23 00:22:16,311 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022301,20170514,stat_1T.properties,14,0,0,205100,8,100,157
+2018-07-23 00:22:16,928 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022835,20170515,stat_1T.properties,12,2,800,205900,10,100,158
+2018-07-23 00:22:17,380 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022370,20170516,stat_1T.properties,10,0,0,205900,10,100,158
+2018-07-23 00:22:17,865 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022857,20170517,stat_1T.properties,12,1,-1000,204900,11,90,156
+2018-07-23 00:22:18,408 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022372,20170518,stat_1T.properties,11,1,-1000,203900,12,83,153
+2018-07-23 00:22:18,785 [main] INFO  c.p.b.s.UserBase.writeUserStatus - ëçäá,201807230022776,20170519,stat_1T.properties,7,3,-2000,201900,15,73,148
+
+
+
+
+

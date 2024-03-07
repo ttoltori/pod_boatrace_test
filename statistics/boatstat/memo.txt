@@ -1,0 +1,451 @@
+s
+https://www.boatrace.jp/owpc/pc/race/raceresult?rno=7&jcd=20&hd=20110720
+  3,1,6중에서 3,6번선수 특징 파악해볼것
+２０１１年７月２０日若松競艇７Ｒ
+２連単
+３－１　４８０円
+３連単
+３－１－６　９３５０円
+３着にこの条件が当てはまった
+選手が入っただけでオッズは
+約２０倍に跳ね上がりました。
+２連単は２番人気
+大本命の舟券です。
+キーとなる選手はこの選手です。
+６号艇　平瀬　城啓
+----------------------------------
+http://www.shimizukikaku.com/index.php?%E7%AB%B6%E8%89%87%E3%80%80%E4%B8%87%E8%88%9F%E5%88%B8%E3%82%92%E3%82%B3%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%88%E3%81%AB%E5%8F%96%E3%82%8B%E6%96%B9%E6%B3%95%E3%80%80%E3%82%A4%E3%83%B3%E3%83%95%E3%82%A9%E3%83%88%E3%83%83%E3%83%97
+이 기사 내용 검증해볼 것
+----------------------------------
+6번선수 3착을 맞추는 것이 키포인트
+二連単本命＋３連単穴（３着６号艇）
+----------------------------------
+280488
+
+Starting...
+Prepare Import...
+Prepare Import done
+Import data file....
+- Prepare Import
+- Begin Import
+- Row import failed with error: ("Incorrect string value: '\\xE9\\x80\\x83\\xE3\\x81\\x92' for column 'kimarite' at row 1", 1366)
+- Row import failed with error: ("Incorrect string value: '\\xE9\\x80\\x83\\xE3\\x81\\x92' for column 'kimarite' at row 1", 1366)
+- Row import failed with error: ("Incorrect string value: '\\xE9\\x80\\x83\\xE3\\x81\\x92' for column 'kimarite' at row 1", 1366)
+
+
+
+20080501 : 오피셜 사이트 데이터 시작
+12:58 再起動
+20170309-20180415 : popular생성완료
+
+race_result_digest
+  결과확인 10분후
+  결과파일 출력 날짜 null
+  레이스결과 결과 출력 내용에 상세 출력
+  레이스결과 베팅내용 상세 출력
+현재레이스 상태 save restore
+현재 장별 마틴상태 save restore
+로그 출력내용 보강 장,레이스늘 출력되도록
+TohyoManager.bet - 뱤?뾴땫:BetRequest{ 뤾긓?긤:22 깒?긚NO:01 Bet{3T:143:100:8.5} Bet{3T:145:100:22.9} Bet{3T:134:100:6.4} 뜃똶뗠뒂: 300 }
+https://www.boatrace.jp/owpc/pc/race/racelist?rno=1&jcd=02&hd=20080501
+
+:08 깒?긚NO:03 
+me  Bet{3T:154:100:15.2} Bet{3T:415:100:17.8} Bet{3T:456:100:34.6} 뜃똶뗠뒂: 300 }
+web Bet{3T:154:100:14.0} Bet{3T:415:100:18.8} Bet{3T:456:100:37.1} 뜃똶뗠뒂: 300 }
+si  Bet{3T:154:100:15.2} Bet{3T:415:100:21.1} Bet{3T:456:100:37.9} 뜃똶뗠뒂: 300 }
+
+cd C:\Dev\workspace\Oxygen\pod_boatrace\test
+
+copy (
+select * from rec_race_waku
+) to 'C:\Dev\workspace\Oxygen\pod_boatrace\src\statistics\boatstat\rec_race_waku.csv' with csv;
+
+
+
+==================
+20180605
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20090101 20180505
+
+Caused by: org.postgresql.util.PSQLException: ERROR: numericフィ?ルドのオ?バ?フロ?
+  詳細: 精度5、位取り2を持つフィ?ルドは、10^3より小さな絶?値に丸められます。
+ -> error
+2008년 데이터는 버리자.
+
+[재 DB화]    
+
+20180510 make_stat バグあり
+
+통계파일 기존거 백업하고
+stat_make_pattern을 4와꾸만으로 바꿔서 재생성
+
+chcp 932
+chcp 65001
+
+psql -h localhost -U postgres -d boatstat -p 55432
+
+20170725~20180124
+20180125~20180725
+==================
+20180924
+순위중에 앞자리 3,4개로 분할해 볼것
+  -> 급별 순위, 평균 ST 순위
+
+truncate rec_race_sg;  
+
+truncate rec_race_ip;
+　
+insert into rec_race_ip
+select * from rec_race where grade in ('G3', 'ip');
+
+copy (
+select * from rec_fame
+) to 'C:\Dev\workspace\Oxygen\pod_boatrace\src\statistics\boatstat\rec_fame.csv' with csv;
+
+
+20181118 DB現時点 ip,G3だけ意味ある。SG級は再アップロードすること！！！
+
+==================
+20190105
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatGeneratorOnetime 20100101 20110101 20121231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatGeneratorOnetime 20120101 20130101 20141231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatGeneratorOnetime 20140101 20150101 20161231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatGeneratorOnetime 20160101 20170101 20181007
+
+==================
+20190103
+paramFromYmdTrain VARCHAR(8),
+paramToYmdTrain VARCHAR(8), 
+paramYearsCountTrain int, 
+paramFromYmdTest VARCHAR(8),
+paramToYmdTest VARCHAR(8), 
+paramYearsCountTest int, 
+paramBettype VARCHAR(3),
+paramBettypeName VARCHAR(20),
+paramPattern1 VARCHAR(200),
+paramPattern2 VARCHAR(200),
+paramMinPatternCnt int, 
+paramMinHitRate numeric(5,2), 
+paramMaxHitRate numeric(5,2), 
+paramMinIncomeRate numeric(5,2),
+paramMaxIncomeRate numeric(5,2),
+paramMinOdds numeric(5,2),
+paramMaxOdds numeric(5,2),
+paramOrderBy VARCHAR(200), -- zen_filter.* (hitrate, incomerate, avgodds)
+paramRankCols int, 
+paramPath VARCHAR(200))
+
+select execute_all_boatstat3(
+'20100101', '20161231', 7, '20170101', '20171231', 1, '2F', 'nirenhuku',  'race.jyocd', 'wr11122122', '12', 50,
+0.1, 1, 0.6, 999, 3.5, 999, 'incomerate desc', 2, 'C:\weka_training\boatstat\result\');
+
+select execute_all_real_boatstat3(
+'20100101', '20161231', 7, '20170101', '20171231', 1, '20180101', '20181007', 1, '2F', 'nirenhuku',  'race.jyocd', 'wr11122122', '12', 50,
+0.1, 1, 0.6, 999, 3.5, 999, 'incomerate desc', 2, 'C:\weka_training\boatstat\result\');
+
+select execute_all_boatstat3(
+'20100101', '20161231', 7, '20170101', '20171231', 1, '2T', 'nirentan',  'race.jyocd', 'wr11122122', '12', 50,
+0.1, 1, 0.6, 999, 5, 999, 'incomerate desc', 2, 'C:\weka_training\boatstat\result\');
+
+select execute_all_real_boatstat3(
+'20100101', '20161231', 7, '20170101', '20171231', 1, '20180101', '20181007', 1, '2T', 'nirentan',  'race.jyocd', 'wr11122122', '12', 50,
+0.1, 1, 0.6, 999, 5, 999, 'incomerate desc', 2, 'C:\weka_training\boatstat\result\');
+
+
+select generate_boatstat3('20100101', '20161231', 7, '2F', 'nirenhuku', 'wr1112', 'wr1112', 500, 0.1, 1, 0.9, 999, '20100101_20161231_2F_wr1112_wr1112_500_0.1_1_0.9_999_1_999', 'C:\weka_training\boatstat\result\');
+select simulate_boatstat3('20170101', '20171231', '2F', 'nirenhuku', 'wr1112', 'wr1112', 1, 999, 'avgodds', '20100101_20161231_2F_wr1112_wr1112_500_0.1_1_0.9_999_1_999', 'C:\weka_training\boatstat\result\');
+select output_boatstat3('20170101', '20171231', 1, '2F', 2, '20100101_20161231_2F_wr1112_wr1112_500_0.1_1_0.9_999_1_999', 'C:\weka_training\boatstat\result\');
+
+
+delete from zen_result;
+delete from zen_result_stat;
+delete from zen_overall;
+delete from zen_overall_real;
+delete from zen_result_real;
+delete from zen_result_stat_real;
+delete from zen_result_overall_real;
+
+
+==================
+20190102
+select output_boatstat3('20170101', '20171231', 1, '2F', 'desc', 'C:\weka_training\boatstat\result\');
+
+
+==================
+20181223
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.weka.TestClassifier49
+
+==================
+20181209
+
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatGenerator 20100101 20120101 20121231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatGenerator 20110101 20130101 20131231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatGenerator 20120101 20140101 20141231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatGenerator 20130101 20150101 20151231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatGenerator 20140101 20160101 20161231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatGenerator 20150101 20170101 20171231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatGenerator 20160101 20180101 20181007
+
+
+
+cd C:\Dev\workspace\Oxygen\pod_boatrace\test
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.RaceFileUploader 20100101 20181007 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.RaceFileUploader 20180101 20180130 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+
+
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.OddsFileUploader 20100101 20101231 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.OddsFileUploader 20110101 20111231 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.RaceFileUploader 20100101 20101231 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.RaceFileUploader 20110101 20111231 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.RaceFileUploader 20100101 20181013 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20130101 20141231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20150101 20161231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20170101 20181013
+
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.OddsFileUploader 20120101 20131231 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.OddsFileUploader 20140101 20151231 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.OddsFileUploader 20160101 20171231 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.OddsFileUploader 20180101 20181007 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.RaceFileUploader 20120101 20131231 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.RaceFileUploader 20140101 20151231 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.RaceFileUploader 20160101 20171231 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.RaceFileUploader 20180101 20181007 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+
+
+
+OK - java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20171221 20181013 1 0 72 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+OK - java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20141217 20150630 1 0 75 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+OK - java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20160401 20160730 1 0 43 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+OK - java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20160801 20161231 1 0 43 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+OK - java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20170101 20170308 1 0 43 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+OK java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20150725 20150815 99 0 43 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+OK java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20151221 20151231 99 0 43 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+OK java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20170201 20170308 99 0 43 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+OK java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20130701 20131231 1 0 28 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+OK java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20130701 20131231 99 0 28 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+OK java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20130524 20130630 1 0 28 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+OK java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20130524 20130630 99 0 28 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20110701 20111231 1 0 55 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100701 20101231 1 0 55 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20110701 20111231 99 0 55 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100701 20101231 99 0 55 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20110101 20110630 1 0 55 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100101 20100630 1 0 55 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20110101 20110630 99 0 55 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100101 20100630 99 0 55 C:/Dev/workspace/Oxygen/pod_boatrace/test/properties/race_result_rebuild.properties
+
+
+java -Dlogback.configurationFile=/home/ttoltori/boatrace/test/logback.xml -cp ./:./boatrace.jar:../release/lib/*:. com.pengkong.boatrace.scraping.OddsBankDownloader 20141209 20151231 99 10 /home/ttoltori/boatrace/test/properties/race_result_rebuild.properties &
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100101 20101231 1
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100101 20101231 1
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100101 20101231 1
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100101 20101231 1
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100101 20101231 1
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100101 20101231 1
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100101 20101231 1
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.OddsBankDownloader 20100101 20101231 1
+
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.BoatWebDownloader 20180726 20181013
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.StatResultLevelRankGenerator 20170504 20170505 1T 20090101 30 999999 0.1 1 1.2 999999
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.SimulationDailyBatch 20170125 20180124 stat_2T.properties
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.SimulationStatGenerator 20170504 20170504
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.RaceFileUploader
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20090101 20101231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20110101 20121231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20130101 20141231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20150101 20161231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20170101 20181231
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 4 20150101 20161231
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20150619 20151231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20160101 20160601
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20160602 20161231
+
+
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 1 20150101 20161231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 2 20150101 20161231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20150619 20161231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 4 20150101 20161231
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20090101 20101231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20110101 20121231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20130101 20141231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20150101 20161231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20170101 20181231
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 2 20090101 20091231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 2 20100101 20101231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 2 20110101 20111231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 2 20120101 20121231
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20090101 20090701
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20090702 20091231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20100101 20100701
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20100702 20101231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20110101 20110701
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20110702 20111231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20120101 20120701
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 3 20120702 20121231
+
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20170101 20171231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20180101 20180505
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.scraping.BoatWebDownloader 20180722 20180724
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20180726 20181007
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20080501 20081231
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20120101 20121231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20130401 20130630
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20130701 20140930
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20141001 20141231
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20150101 20150331
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20150401 20150630
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20150701 20150930
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20151001 20151231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20160101 20160331
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20160401 20160630
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20160701 20160930
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20161001 20161231
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20170101 20170308
+
+
+
+               
+1442 1457
+1444 1459
+1447 1502
+
+20170327-20170727
+20170728-20171215
+20171216-20180415
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader2 20110401 20110630
+
+
+
+cd C:\Dev\workspace\Oxygen\pod_boatrace\test
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.worker.Worker3T
+常滑>	7R 14:04
+
+java -cp ./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil 20180305 20180414
+
+java -cp ./;./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20180415 20180505
+java -cp ./boatrace2.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20170416 20170525
+java -cp ./boatrace3.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20170526 20170706
+java -cp ./boatrace4.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20170707 20170817
+java -cp ./boatrace5.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20170818 20170928
+
+java -cp ./boatrace6.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20170929 20171110
+
+java -cp ./boatrace7.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20171111 20171231
+
+java -cp ./boatrace8.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20180101 20180215
+
+java -cp ./boatrace9.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20180216 20180326
+java -cp ./boatrace10.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20180327 20180415
+
+コンピュータ予想URL
+https://www.boatrace.jp/owpc/pc/race/pcexpect?rno={レース番号}&jcd={場コード}&hd={yyyyMMdd}
+https://www.boatrace.jp/owpc/pc/race/pcexpect?rno=9&jcd=01&hd=20180318
+
+成績ダウンロード
+http://www1.mbrace.or.jp/od2/K/201802/k180201.lzh
+
+番組表ダウンロード
+http://www1.mbrace.or.jp/od2/B/201802/b180201.lzh
+
+
+	Logger logger = LoggerFactory.getLogger(xxx.class);
+
+java -cp ./boatrace.jar;./lib/*;. com.pengkong.boatrace.service.BoatWebDownloader 20170309 20180415
+java -cp ./boatrace.jar;./lib/*;. com.pengkong.boatrace.util.TmpUtil
+
+
+<tbody class="is-fs12 "> 
+ <tr> 
+  <td class="is-boatColor1 is-fs14" rowspan="4">1</td> 
+  <td rowspan="4"><a href="/owpc/pc/data/racersearch/profile?toban=4020"><img src="/racerphoto/4020.jpg" width="67" height="95" alt=""></a></td> 
+  <td class="is-fs18 is-fBold" rowspan="4"><a href="/owpc/pc/data/racersearch/profile?toban=4020">川上　　清人</a></td> 
+  <td rowspan="2">59.0kg</td> 
+  <td rowspan="4">6.74</td> 
+  <td rowspan="4">-0.5</td> 
+  <td rowspan="4">&nbsp;</td> 
+  <td class="is-p5-5" rowspan="4"> 
+   <ul class="labelGroup1"> 
+   </ul>
+   <!-- /.labelGroup1 --> </td> 
+  <td>R</td> 
+  <td class="">&nbsp;</td> 
+ </tr> 
+ <tr> 
+  <td>進入</td> 
+  <td>&nbsp;</td> 
+ </tr> 
+ <tr> 
+  <td rowspan="2">0.0</td> 
+  <td>ST</td> 
+  <td>&nbsp;</td> 
+ </tr> 
+ <tr> 
+  <td>着順</td> 
+  <td class="is-fBold"><a href="/owpc/pc/race/raceresult"></a></td> 
+ </tr> 
+</tbody>
+
+
+<span class="weather1_bodyUnitLabelData">10.0℃</span>
+<div class="weather1_bodyUnit is-direction">
+                        <p class="weather1_bodyUnitImage is-direction1"></p><!-- 方角画像 -->
+                        <div class="weather1_bodyUnitLabel">
+                          <span class="weather1_bodyUnitLabelTitle">気温</span>
+                          <span class="weather1_bodyUnitLabelData">10.0℃</span>
+                        </div><!-- /.weather1_bodyUnitLabel -->
+                      </div>
+                      <div class="weather1_bodyUnit is-wind">
+                        <div class="weather1_bodyUnitLabel">
+                          <span class="weather1_bodyUnitLabelTitle">風速</span>
+                          <span class="weather1_bodyUnitLabelData">1m</span>
+                        </div><!-- /.weather1_bodyUnitLabel -->
+                      </div>
+                      
+<span class="table1_boatImage1TimeInner ">.42　
+                                              逃げ
+                                            </span>
+<span class="table1_boatImage1TimeInner ">.38　
+                                              &nbsp;
+                                            </span><span class="is-payout1">
+                                            4,060</span>
+                                            
+                                            
+		sb.append(xxx);
+		sb.append(BoatProperty.CSV_DELIMITER);

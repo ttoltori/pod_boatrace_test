@@ -1,0 +1,65 @@
+description := 착순 1,2,3을 nation3rate을 속성으로 하여 예측하는 3개의 모델을 생성한다. 
+//
+batch_name := make_model_bayesnet.bat
+//
+model_interval_days := 30
+//
+model_data_days := 730
+//
+pattern_name := nopattern 
+//
+attributes := 
+  ranknationrate1:numeric, 
+  ranknationrate2:numeric, 
+  ranknationrate3:numeric, 
+  ranknationrate4:numeric, 
+  ranknationrate5:numeric, 
+  ranknationrate6:numeric 
+//
+class_values := 
+  1,2,3,4,5,6
+//
+sql_model := 
+  select 
+    'nopattern' pattern, 
+    race.ymd, 
+    cast(nationwiningrate1 as int)::text || lpad(cast(nation2winingrate1 as int)::text,2,'0') || lpad(cast(nation3winingrate1 as int)::text,2,'0') ranknationrate1, 
+    cast(nationwiningrate2 as int)::text || lpad(cast(nation2winingrate2 as int)::text,2,'0') || lpad(cast(nation3winingrate2 as int)::text,2,'0') ranknationrate2, 
+    cast(nationwiningrate3 as int)::text || lpad(cast(nation2winingrate3 as int)::text,2,'0') || lpad(cast(nation3winingrate3 as int)::text,2,'0') ranknationrate3, 
+    cast(nationwiningrate4 as int)::text || lpad(cast(nation2winingrate4 as int)::text,2,'0') || lpad(cast(nation3winingrate4 as int)::text,2,'0') ranknationrate4, 
+    cast(nationwiningrate5 as int)::text || lpad(cast(nation2winingrate5 as int)::text,2,'0') || lpad(cast(nation3winingrate5 as int)::text,2,'0') ranknationrate5, 
+    cast(nationwiningrate6 as int)::text || lpad(cast(nation2winingrate6 as int)::text,2,'0') || lpad(cast(nation3winingrate6 as int)::text,2,'0') ranknationrate6, 
+	substring(sanrentanno from 1 for 1) rank1, 
+	substring(sanrentanno from 2 for 1) rank2, 
+	substring(sanrentanno from 3 for 1) rank3 
+  from rec_race race, rec_race_waku2 waku2
+  where race.ymd >= '{fromYmd}' and race.ymd <= '{toYmd}' 
+    and sanrentanno not in ('特払','不成立','発売無') 
+    and race.ymd = waku2.ymd and race.jyocd = waku2.jyocd and race.raceno = waku2.raceno 
+    order by pattern, race.ymd, race.sime  
+//
+result_range := 20180101~20191020
+//
+result_creator := com.pengkong.boatrace.experiment.exp02.result.RankResultCreatorDefault
+//
+sql_result := 
+  select 
+    'nopattern' pattern, 
+    race.ymd, 
+    race.jyocd, 
+    race.raceno, 
+    race.sime,
+    tansyono, nirentanno, nirenhukuno, sanrentanno, sanrenhukuno, 
+    tansyoprize, nirentanprize, nirenhukuprize, sanrentanprize, sanrenhukuprize, 
+    tansyopopular, nirentanpopular, nirenhukupopular, sanrentanpopular, sanrenhukupopular, 
+    cast(cast(nationwiningrate1 as int)::text || lpad(cast(nation2winingrate1 as int)::text,2,'0') || lpad(cast(nation3winingrate1 as int)::text,2,'0') as int) ranknationrate1, 
+    cast(cast(nationwiningrate2 as int)::text || lpad(cast(nation2winingrate2 as int)::text,2,'0') || lpad(cast(nation3winingrate2 as int)::text,2,'0') as int) ranknationrate2, 
+    cast(cast(nationwiningrate3 as int)::text || lpad(cast(nation2winingrate3 as int)::text,2,'0') || lpad(cast(nation3winingrate3 as int)::text,2,'0') as int) ranknationrate3, 
+    cast(cast(nationwiningrate4 as int)::text || lpad(cast(nation2winingrate4 as int)::text,2,'0') || lpad(cast(nation3winingrate4 as int)::text,2,'0') as int) ranknationrate4, 
+    cast(cast(nationwiningrate5 as int)::text || lpad(cast(nation2winingrate5 as int)::text,2,'0') || lpad(cast(nation3winingrate5 as int)::text,2,'0') as int) ranknationrate5, 
+    cast(cast(nationwiningrate6 as int)::text || lpad(cast(nation2winingrate6 as int)::text,2,'0') || lpad(cast(nation3winingrate6 as int)::text,2,'0') as int) ranknationrate6 
+  from rec_race race, rec_race_waku2 waku2
+  where race.ymd >= '{fromYmd}' and race.ymd <= '{toYmd}' 
+    and sanrentanno not in ('特払','不成立','発売無') 
+    and race.ymd = waku2.ymd and race.jyocd = waku2.jyocd and race.raceno = waku2.raceno 
+    order by pattern, race.ymd, race.sime  

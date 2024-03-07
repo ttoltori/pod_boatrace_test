@@ -1,0 +1,27 @@
+REM -- 20200620 사용제외
+@echo off
+REM 실행조건:rank_result_form_generator.bat가 사전에 실행되어야 한다. 
+
+if "%~3"=="" (
+  echo usage: command {targetDb} {fromYmd} {toYmd}
+  goto :eof
+)
+
+cd /d %~dp0
+
+set target_db=%1
+set from_ymd=%2
+set to_ymd=%3
+
+set starttime=%date%_%time%
+
+echo "%target_db% select rank_table_generator_hity('%from_ymd%', '%to_ymd%')"
+psql -h localhost -U postgres -d %target_db% -p 55432 -c "select rank_table_generator_hity('%from_ymd%', '%to_ymd%')"
+
+set endtime=%date%_%time%
+
+echo rank_table_generator_hity %1 %2 %3
+echo start: %starttime%
+echo end  : %endtime%
+
+:eof

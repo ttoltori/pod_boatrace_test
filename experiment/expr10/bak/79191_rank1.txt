@@ -1,0 +1,10 @@
+"79191 0.1"  
+"=================================="  
+Terminate batch job (Y/N)? 
+Terminate batch job (Y/N)? Terminate batch job (Y/N)? 
+BoatWebSocketServer "boosting_type=gbdt,learning_rate=0.1"
+Terminate batch job (Y/N)? 
+start: 2023/05/08_23:54:08.41
+Terminate batch job (Y/N)? 
+end  : 2023/05/08_23:54:10.60
+Terminate batch job (Y/N)? 

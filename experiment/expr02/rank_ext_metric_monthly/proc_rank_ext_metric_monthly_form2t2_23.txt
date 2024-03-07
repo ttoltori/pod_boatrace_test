@@ -1,0 +1,65 @@
+-- 패턴과 랭크2의 와꾸를 혼합하여 분석한다.
+DROP FUNCTION IF EXISTS rank_ext_metric_monthly_form2t2_23 (VARCHAR(10), VARCHAR(8), VARCHAR(8));
+CREATE OR REPLACE FUNCTION rank_ext_metric_monthly_form2t2_23 (
+paramDescription VARCHAR(10),
+paramFromYmd VARCHAR(8),
+paramToYmd VARCHAR(8)
+) RETURNS VOID AS $$
+  DECLARE
+    rec RECORD;
+    days int;
+    months int;
+    paramBetType VARCHAR(10);
+    paramRankType VARCHAR(10);
+  BEGIN
+    paramBetType := '2T';
+    paramRankType := 'form2t2_23';
+    
+	-- 기간안의 날짜수
+	months := 30;
+	
+	-- 포메이션 투표용 임시 결과테이블 생성 skip !!!이전에 만들어져 있을 것
+	
+	-- 패턴/승식/구미방별/월별통계  skip !!!이전에 만들어져 있을 것
+	
+	-- 통계 메트릭정보
+	raise info 'insert rank_ext_metric_monthly';
+	delete from rank_ext_metric_monthly where description = paramDescription and ranktype = paramRankType;
+	insert into rank_ext_metric_monthly
+	select
+	  description,
+	  bettype, 
+	  bet_kumiban,
+	  pattern, 
+	  ranktype, 
+	  waku, 
+	  avg(betcnt)::int avg_betcnt,
+	  avg(hitcnt)::int avg_hitcnt,
+	  avg(betamt)::int avg_betamt,
+	  min(betamt)::int min_betamt,
+	  max(betamt)::int max_betamt,
+	  avg(hitamt)::int avg_hitamt,
+	  min(hitamt)::int min_hitamt,
+	  max(hitamt)::int max_hitamt,
+	  avg(incomeamt)::int avg_incomeamt,
+	  min(incomeamt)::int min_incomeamt,
+	  max(incomeamt)::int max_incomeamt,
+	  avg(hitrate)::numeric(7,2) avg_hitrate,
+	  min(hitrate)::numeric(7,2) min_hitrate,
+	  max(hitrate)::numeric(7,2) max_hitrate,
+	  stddev_pop(hitrate)::numeric(7,2) dev_hitrate,
+	  avg(incomerate)::numeric(7,2) avg_incomerate,
+	  min(incomerate)::numeric(7,2) min_incomerate,
+	  max(incomerate)::numeric(7,2) max_incomerate,
+	  stddev_pop(incomerate)::numeric(7,2) dev_incomerate
+	from rank_ext_monthly
+	where description = paramDescription and ranktype = paramRankType
+	group by description, bettype, bet_kumiban, pattern, ranktype, waku
+	order by description, bettype, bet_kumiban, pattern, ranktype, waku;
+	
+  END;
+$$ LANGUAGE plpgsql;
+
+select rank_ext_metric_monthly_form2t2_23('0003', '20170801', '20171231');
+
+select count(*) from rank_ext_metric_monthly where ranktype = 'form2t2_23';

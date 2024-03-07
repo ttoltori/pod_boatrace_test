@@ -1,0 +1,77 @@
+"70101 0.1"  
+"=================================="  
+Boosting round 0: training loss = 1.2811, validation loss = 1.2578
+Boosting round 49: training loss = 1.1281, validation loss = 1.1588
+Boosting round 99: training loss = 1.0946, validation loss = 1.1612
+Training set score: 0.5869
+Test set score: 0.5724
+              precision    recall  f1-score   support
+
+           1       0.60      0.94      0.73     18170
+           2       0.40      0.18      0.24      4637
+           3       0.35      0.08      0.13      3847
+           4       0.34      0.06      0.10      3122
+           x       0.34      0.04      0.07      2661
+
+    accuracy                           0.57     32437
+   macro avg       0.41      0.26      0.26     32437
+weighted avg       0.49      0.57      0.48     32437
+
+BoatWebSocketServer "boosting_type=gbdt,learning_rate=0.1"
+start: 2023/05/08_23:54:37.19
+end  : 2023/05/08_23:54:45.72
+"70101 0.5"  
+"=================================="  
+Boosting round 0: training loss = 1.1942, validation loss = 1.1833
+Boosting round 49: training loss = 1.0304, validation loss = 1.2132
+Boosting round 99: training loss = 0.9174, validation loss = 1.2569
+Training set score: 0.6662
+Test set score: 0.5461
+              precision    recall  f1-score   support
+
+           1       0.60      0.89      0.72     18170
+           2       0.34      0.17      0.23      4637
+           3       0.26      0.09      0.14      3847
+           4       0.23      0.08      0.12      3122
+           x       0.20      0.06      0.09      2661
+
+    accuracy                           0.55     32437
+   macro avg       0.33      0.26      0.26     32437
+weighted avg       0.45      0.55      0.47     32437
+
+BoatWebSocketServer "boosting_type=gbdt,learning_rate=0.5"
+start: 2023/05/08_23:57:30.35
+end  : 2023/05/08_23:57:38.37
+"70101 -.1"  
+"=================================="  
+Terminate batch job (Y/N)? 
+BoatWebSocketServer "boosting_type=gbdt,learning_rate=-.1"
+start: 2023/05/09_15:23:50.66
+end  : 2023/05/09_15:23:52.22
+"70101 0.1"  
+"=================================="  
+BoatWebSocketServer "boosting_type=gbdt,learning_rate=0.1"
+start: 2023/05/09_15:23:54.81
+end  : 2023/05/09_15:23:57.03
+"70101 0.1"  
+"=================================="  
+Boosting round 0: training loss = 1.2811, validation loss = 1.2578
+Boosting round 49: training loss = 1.1281, validation loss = 1.1588
+Boosting round 99: training loss = 1.0946, validation loss = 1.1612
+Training set score: 0.5869
+Test set score: 0.5724
+              precision    recall  f1-score   support
+
+           1       0.60      0.94      0.73     18170
+           2       0.40      0.18      0.24      4637
+           3       0.35      0.08      0.13      3847
+           4       0.34      0.06      0.10      3122
+           x       0.34      0.04      0.07      2661
+
+    accuracy                           0.57     32437
+   macro avg       0.41      0.26      0.26     32437
+weighted avg       0.49      0.57      0.48     32437
+
+BoatWebSocketServer "boosting_type=gbdt,learning_rate=0.1"
+start: 2023/05/09_15:24:31.03
+end  : 2023/05/09_15:24:35.47

@@ -1,0 +1,44 @@
+"70201 0.1"  
+"=================================="  
+Boosting round 0: training loss = 1.2679, validation loss = 1.2525
+Boosting round 49: training loss = 1.0467, validation loss = 1.1198
+Boosting round 99: training loss = 0.9940, validation loss = 1.1230
+         importance
+pd123          1286
+mbo3t1          755
+mbo3t2          664
+mbo3t3          710
+mbo3t4          688
+mbo3t5          637
+mbo3t6          630
+mbo3t7          668
+mbo3t8          609
+mbo3t9          673
+mbo3t10         835
+mbo3t11         734
+mbo3t12         620
+mbo3t13         718
+mbo3t14         604
+mbo3t15         732
+mbo3t16         599
+mbo3t17         672
+mbo3t18         829
+mbo3t19         623
+mbo3t20         714
+Training set score: 0.6165
+Test set score: 0.5846
+              precision    recall  f1-score   support
+
+           1       0.63      0.92      0.74     11252
+           2       0.40      0.22      0.28      2836
+           3       0.39      0.16      0.23      2432
+           4       0.38      0.12      0.18      1855
+           x       0.39      0.09      0.14      1665
+
+    accuracy                           0.58     20040
+   macro avg       0.44      0.30      0.32     20040
+weighted avg       0.52      0.58      0.51     20040
+
+BoatWebSocketServer "boosting_type=gbdt,learning_rate=0.1"
+start: 2023/05/10_23:47:20.26
+end  : 2023/05/10_23:47:23.88

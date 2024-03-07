@@ -1,0 +1,63 @@
+description := 착순 1,2,3을 nation3rate을 속성으로 하여 예측하는 3개의 모델을 생성한다. 
+//
+batch_name := make_model_bayesnet.bat
+//
+model_interval_days := 30
+//
+model_data_days := 1825
+//
+attributes := 
+  nation3winingrate1:numeric, 
+  nation3winingrate2:numeric, 
+  nation3winingrate3:numeric, 
+  nation3winingrate4:numeric, 
+  nation3winingrate5:numeric, 
+  nation3winingrate6:numeric 
+//
+class_values := 
+  1,2,3,4,5,6
+//
+sql_model := 
+  select 
+    turn || '_' || alevelcount pattern, 
+    race.ymd, 
+	nation3winingrate1::text, 
+	nation3winingrate2::text, 
+	nation3winingrate3::text, 
+	nation3winingrate4::text, 
+	nation3winingrate5::text, 
+	nation3winingrate6::text, 
+	substring(sanrentanno from 1 for 1) rank1, 
+	substring(sanrentanno from 2 for 1) rank2, 
+	substring(sanrentanno from 3 for 1) rank3 
+  from rec_race race, rec_race_waku2 waku2
+  where race.ymd >= '{fromYmd}' and race.ymd <= '{toYmd}' 
+    and sanrentanno not in ('特払','不成立','発売無') 
+    and race.ymd = waku2.ymd and race.jyocd = waku2.jyocd and race.raceno = waku2.raceno 
+    order by pattern, race.ymd, race.sime  
+//
+result_range := 20180101~20191020
+//
+result_creator := com.pengkong.boatrace.experiment.exp02.result.RankResultCreatorDefault
+//
+sql_result := 
+  select 
+    turn || '_' || alevelcount pattern, 
+    race.ymd, 
+    race.jyocd, 
+    race.raceno, 
+    race.sime,
+    tansyono, nirentanno, nirenhukuno, sanrentanno, sanrenhukuno, 
+    tansyoprize, nirentanprize, nirenhukuprize, sanrentanprize, sanrenhukuprize, 
+    tansyopopular, nirentanpopular, nirenhukupopular, sanrentanpopular, sanrenhukupopular, 
+	cast(nation3winingrate1 as double precision), 
+	cast(nation3winingrate2 as double precision), 
+	cast(nation3winingrate3 as double precision), 
+	cast(nation3winingrate4 as double precision), 
+	cast(nation3winingrate5 as double precision), 
+	cast(nation3winingrate6 as double precision) 
+  from rec_race race, rec_race_waku2 waku2
+  where race.ymd >= '{fromYmd}' and race.ymd <= '{toYmd}' 
+    and sanrentanno not in ('特払','不成立','発売無') 
+    and race.ymd = waku2.ymd and race.jyocd = waku2.jyocd and race.raceno = waku2.raceno 
+    order by pattern, race.ymd, race.sime  

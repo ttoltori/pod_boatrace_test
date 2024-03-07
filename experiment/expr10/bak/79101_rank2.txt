@@ -1,0 +1,23 @@
+"79101 0.1"  
+"=================================="  
+Boosting round 0: training loss = 1.7222, validation loss = 1.7119
+Boosting round 49: training loss = 1.6024, validation loss = 1.6463
+Boosting round 99: training loss = 1.5575, validation loss = 1.6485
+Training set score: 0.3710
+Test set score: 0.2900
+              precision    recall  f1-score   support
+
+           1       0.24      0.05      0.09      5634
+           2       0.31      0.62      0.41      8374
+           3       0.29      0.33      0.31      6911
+           4       0.27      0.21      0.24      5413
+           5       0.23      0.10      0.14      3627
+           6       0.23      0.08      0.11      2509
+
+    accuracy                           0.29     32468
+   macro avg       0.26      0.23      0.21     32468
+weighted avg       0.27      0.29      0.25     32468
+
+BoatWebSocketServer "boosting_type=gbdt,learning_rate=0.1"
+start: 2023/05/09_ 0:00:07.34
+end  : 2023/05/09_ 0:00:16.60

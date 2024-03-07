@@ -1,0 +1,39 @@
+generate_stat_2T // 20170725_stat_2T_1_12_18_1_1 // (odds < 2 || odds > 5) // jyoIncludeLevels=ip,G3 的中率：29
+2018-09-06 23:58:45,568 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809062358560,20180725,stat_2T.properties,11,8,520,143293,3013,29,81
+
+--------------------------------------
+generate_stat_2T // 20170725_stat_2T_1_12_6_1_1 // (odds < 2 || odds > 3) // jyoIncludeLevels=ip,G3 的中率：31
+2018-09-07 00:42:41,283 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809070042276,20180615,stat_2T.properties,13,22,-10,69142,5876,31,77
+
+--------------------------------------
+generate_stat_2T // 20170725_stat_2T_1_13_18_1_1 // (odds < 2 || odds > 5) // jyoIncludeLevels=ip,G3 的中率：26
+2018-09-07 00:14:58,227 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809070014220,20180725,stat_2T.properties,11,7,-700,161737,2001,26,81
+
+--------------------------------------
+generate_stat_2T // 20170725_stat_2T_1_13_6_1_1 // (odds < 2 || odds > 3) // jyoIncludeLevels=ip,G3 的中率：29
+2018-09-07 00:39:12,355 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809070039348,20180725,stat_2T.properties,11,12,-920,98681,4185,29,77
+
+
+
+0000000000000000
+2018-09-09 23:59:31,122 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809092359108,20180125,stat_2T.properties,10,29,-331,76810,7795,27,85 -- stat daily 
+
+2018-09-10 00:02:25,643 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809100002637,20180125,stat_2T.properties,10,28,-231,75334,7565,27,84 -- stat 20170308
+
+2018-09-10 00:04:54,785 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809100004779,20180125,stat_2T.properties,10,29,-331,75084,8251,28,85 -- stat 20180124
+0000000000000000
+
+SimulationWorker worker = new SimulationWorker("20170309", "20180125", rule);
+============================================================================
+20170308_stat_2T_12_10_2_4 // (odds < 2 
+2018-09-10 00:16:33,445 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809100016440,20180125,stat_2T.properties,10,17,249,122675,4812,28,85
+
+20170308_stat_2T_12_5_2_4 // NA
+2018-09-10 00:28:01,412 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809100028407,20180125,stat_2T.properties,10,29,-331,44114,8745,29,82
+
+20170308_stat_2T_12_10_2_4 // NA
+2018-09-10 00:29:19,058 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,20180910002954,20180125,stat_2T.properties,10,18,149,99995,5750,31,84
+
+
+20170308_stat_2T_12_10_2_5// NA
+2018-09-10 00:31:12,003 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809100031999,20180125,stat_2T.properties,10,23,39,77722,7323,29,84

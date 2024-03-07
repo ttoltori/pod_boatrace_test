@@ -1,0 +1,180 @@
+select 
+  sum(betcnt), 
+  cast(avg(hitrate) as numeric(5,2)) avghitrate, 
+  cast(avg(incomerate) as numeric(5,2)) avgincomerate, 
+  sum(betamount)/1951 dailybet, 
+  sum(prize)/1951 dailyincome
+from
+(
+select * 
+from stat_result 
+where 
+  incomerate >= 1.3
+  and patterncnt > 30
+  and hitrate >= 0.3
+order by patterncnt desc, hitrate desc, incomerate desc
+) a;
+
+select 
+  stat.ymd, stat.jyocd, stat.raceno,
+  (stat.ranksum1 || stat.ranksum2 || stat.ranksum3 || stat.ranksum4 || stat.ranksum5 || stat.ranksum6) pattern
+from 
+ rec_race race, 
+where race.ymd = stat.ymd
+  and race.jyocd = stat.jyocd
+  and race.raceno = stat.raceno
+
+
+select pattern1, count(pattern1) cnt
+from stat_pattern
+group by pattern1
+order by cnt desc;
+;
+
+select count(distinct substring(pattern1 from 1 for 19))
+from stat_pattern
+;
+
+select count(distinct ptnracer), count(distinct ptnmotor), count(distinct ptntime)
+from stat_pattern
+;
+
+
+select 
+  count(patterncnt), 
+  cast(avg(hitrate) as numeric(5,2)) avghitrate, 
+  cast(avg(incomerate) as numeric(5,2)) avgincomerate, 
+  sum(betamount)/1951 dailybet, 
+  sum(prize)/1951 dailyincome
+from
+(
+select * 
+from stat_result 
+where 
+  incomerate > 1.2
+  and patterncnt > 10
+  and hitrate >= 0.2
+order by hitrate desc, incomerate desc
+) a;
+
+
+------------------------------------------------
+select * 
+from stat_result 
+where 
+  incomerate > 1
+  and patterncnt > 50
+order by patterncnt desc, incomerate desc
+;
+
+
+select 
+  count(patterncnt), 
+  cast(avg(hitrate) as numeric(5,2)) avghitrate, 
+  cast(avg(incomerate) as numeric(5,2)) avgincomerate, 
+  sum(betamount)/1951 dailybet, 
+  sum(prize)/1951 dailyincome
+from
+(
+select * 
+from stat_result 
+where 
+  incomerate > 1.2
+  and patterncnt > 20
+  and hitrate >= 0.1
+order by hitrate desc, incomerate desc
+) a;
+
+
+select count(distinct pattern) from stat_result;
+------------------------------------------------
+DROP FUNCTION IF EXISTS stat_make_result(VARCHAR(3));
+CREATE OR REPLACE FUNCTION stat_make_result(paramBettype VARCHAR(3))
+RETURNS VOID AS $$
+  BEGIN
+    delete from stat_result;
+    
+    EXECUTE format('
+      insert into  stat_result
+        select 
+          ''ptnracer'',
+          ''%s'',
+          ptntmp.ptnracer, 
+          ptntmp.ptncnt, 
+          (ptntmp.ptncnt * 100) bet, 
+          stattmp.kumiban,
+          stattmp.betcnt,
+          stattmp.prize,
+          cast( cast(stattmp.betcnt as float) / cast(ptntmp.ptncnt as float) as numeric(5,2) ) hitrate,
+          cast( (cast(stattmp.prize as float) / (cast(ptntmp.ptncnt as float) * 100) ) as numeric(5,2) ) incomerate
+        from
+          (
+            select
+              stat.ptnracer, 
+              ( case ''%s''
+                  when ''1T'' then race.tansyono
+                  when ''2T'' then race.nirentanno
+                  when ''2F'' then race.nirenhukuno
+                  when ''3T'' then race.sanrentanno
+                  when ''3F'' then race.sanrenhukuno
+               end
+              ) kumiban,
+              count(stat.ptnracer) betcnt, 
+              sum(race.nirentanprize) prize
+            from rec_race race, stat_pattern stat
+            where race.ymd = stat.ymd
+              and race.jyocd = stat.jyocd
+              and race.raceno = stat.raceno
+            group by stat.ptnracer, kumiban
+          ) stattmp,
+          (
+            select 
+              ptnracer, count(ptnracer) ptncnt
+            from stat_pattern
+            group by ptnracer
+            order by ptncnt desc
+          ) ptntmp
+        where stattmp.ptnracer = ptntmp.ptnracer
+          and ptntmp.ptncnt > 10
+          and cast( cast(stattmp.betcnt as float) / cast(ptntmp.ptncnt as float) as numeric(5,2) ) >= 0.2
+          and cast( (cast(stattmp.prize as float) / (cast(ptntmp.ptncnt as float) * 100) ) as numeric(5,2) ) >= 1.3
+        order by incomerate desc, hitrate desc, ptncnt desc
+      ', paramBettype, paramBettype);
+  END;
+$$ LANGUAGE plpgsql;
+
+--------------------------------------
+delete from stat_pattern;
+insert into stat_pattern
+  select 
+    ymd, jyocd, raceno, bettype,
+    '3ptn' as patterntype,
+    concat_ws('-', 
+      lpad(entry1rank::text, 2, '0'),
+      lpad(entry2rank::text, 2, '0'), 
+      lpad(entry3rank::text, 2, '0'), 
+      lpad(entry4rank::text, 2, '0'), 
+      lpad(entry5rank::text, 2, '0'), 
+      lpad(entry6rank::text, 2, '0')
+    ) ptnracer, 
+    concat_ws('-', 
+      lpad(motorno1rank::text, 2, '0'),
+      lpad(motorno2rank::text, 2, '0'), 
+      lpad(motorno3rank::text, 2, '0'), 
+      lpad(motorno4rank::text, 2, '0'), 
+      lpad(motorno5rank::text, 2, '0'), 
+      lpad(motorno6rank::text, 2, '0')
+    ) ptnmotor, 
+    concat_ws('-', 
+      lpad(avgtime1rank::text, 2, '0'),
+      lpad(avgtime2rank::text, 2, '0'),
+      lpad(avgtime3rank::text, 2, '0'),
+      lpad(avgtime4rank::text, 2, '0'),
+      lpad(avgtime5rank::text, 2, '0'),
+      lpad(avgtime6rank::text, 2, '0')
+    ) ptntime
+  from stat_race 
+  order by ymd, jyocd, raceno, bettype, patterntype
+;
+
+--------------------------------------

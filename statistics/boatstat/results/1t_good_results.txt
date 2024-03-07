@@ -1,0 +1,40 @@
+generate_stat_1T // 20170725_stat_1T_1_1_20_1_1 // if (odds <= 1.4) // jyoIncludeLevels=ip,G3 
+2018-09-05 23:49:27,288 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - ‘Š‡,201809052349282,20180725,stat_1T.properties,11,20,-351,266765,5903,54,111
+
+-----------------------------------------
+generate_stat_1T // 20170725_stat_1T_1_1_20_1_1 // if (odds <= 1.4) // jyoIncludeLevels=ip,G3,G1,G2,SG
+2018-09-05 23:53:59,322 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - ‘Š‡,201809052353317,20180725,stat_1T.properties,13,22,-342,267379,6157,54,110
+
+-----------------------------------------
+generate_stat_1T // 20170725_stat_1T_1_1_20_1_1 // if (odds <= 1.6) // jyoIncludeLevels=ip,G3
+2018-09-06 00:01:27,729 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - ‘Š‡,201809060001725,20180725,stat_1T.properties,11,16,-551,275405,4750,53,116
+
+-----------------------------------------
+generate_stat_1T // 20170725_stat_1T_1_1_20_1_1 // if (odds <= 1.8) // jyoIncludeLevels=ip,G3
+2018-09-06 00:19:11,083 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - ‘Š‡,20180906001979,20180725,stat_1T.properties,11,4,-191,278475,2737,49,128
+
+-----------------------------------------
+generate_stat_1T // 20170725_stat_1T_1_1_20_1_1 // if (odds <= 1.6) nationWiningRank.substring(0,1).equals("1") // jyoIncludeLevels=ip,G3
+2018-09-06 00:09:19,492 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - ‘Š‡,201809060009489,20180725,stat_1T.properties,11,8,-280,241347,1591,62,126
+
+-----------------------------------------
+generate_stat_1T // 20170725_stat_1T_1_1_20_1_1 // if (odds <= 1.6) nationWiningRank.substring(0,1).equals("1") // jyoIncludeLevels=ip,G3,G1,G2,SG
+2018-09-06 00:13:13,975 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - ‘Š‡,201809060013971,20180725,stat_1T.properties,13,8,-280,241324,1668,61,124
+
+-----------------------------------------
+-----------------------------------------
+generate_stat_1T // 20170725_stat_1T_1_1_10_1_1 // if (odds <= 1.6) // jyoIncludeLevels=ip,G3
+2018-09-06 00:28:08,394 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - ‘Š‡,201809060028390,20180725,stat_1T.properties,11,31,-1221,304799,12677,46,108
+
+-----------------------------------------
+generate_stat_1T // 20170725_stat_1T_1_1_10_1_1 // if (odds <= 1.6) nationWiningRank.substring(0,1).equals("1") // jyoIncludeLevels=ip,G3
+2018-09-06 00:31:51,384 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - ‘Š‡,201809060031379,20180725,stat_1T.properties,11,10,-130,247790,2035,61,123
+
+-----------------------------------------
+-----------------------------------------
+generate_boatstat // 20170308_stat_1T_1_300_0.1_9999 // if (odds <= 1.6) 
+2018-09-11 00:01:30,024 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - ‘Š‡,20180911000119,20180125,stat_1T.properties,10,24,579,309113,7798,50,114
+
+
+
+

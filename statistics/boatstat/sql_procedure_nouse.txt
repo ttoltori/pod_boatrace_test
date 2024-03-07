@@ -1,0 +1,298 @@
+DROP FUNCTION IF EXISTS aggregate_wakurank_racer(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_wakurank_racer(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    delete from wakurank_racer;
+    
+    insert into wakurank_racer
+      select 
+        paramYmd,
+        tmp.entry, 
+        tmp.wakurank,
+        tmp.wakurankcnt,
+        cast(cast(tmp.wakurankcnt as float) / 
+          cast(
+            case when substring(wakurank from 1 for 1) = '1' then tr.waku1cnt
+                 when substring(wakurank from 1 for 1) = '2' then tr.waku2cnt
+                 when substring(wakurank from 1 for 1) = '3' then tr.waku3cnt
+                 when substring(wakurank from 1 for 1) = '4' then tr.waku4cnt
+                 when substring(wakurank from 1 for 1) = '5' then tr.waku5cnt
+                 when substring(wakurank from 1 for 1) = '6' then tr.waku6cnt
+                 end
+          as float)
+           * 100 as numeric(5,2)) wakurankrate
+      from (
+        select 
+          entry,
+          (waku::text || rank::text) as wakurank,
+          count((waku::text || rank::text)) as wakurankcnt
+        from rec_racer
+        where
+          (ymd > '20130101' and ymd <= paramYmd)
+        group by entry, wakurank
+      ) tmp, 
+        total_racer tr
+      where tr.entry = tmp.entry
+      order by paramYmd, tmp.entry
+      ;
+  END;
+$$ LANGUAGE plpgsql;
+
+
+DROP FUNCTION IF EXISTS aggregate_total_racer(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_total_racer(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    delete from total_racer;
+    
+    insert into total_racer
+      select 
+        paramYmd,
+        entry,
+        racecnt,
+        flyingcnt,
+        latecnt,
+        waku1cnt,
+        waku2cnt,
+        waku3cnt,
+        waku4cnt,
+        waku5cnt,
+        waku6cnt,
+        rank1cnt,
+        rank2cnt,
+        rank3cnt,
+        rank4cnt,
+        rank5cnt,
+        rank6cnt,
+        cast(cast(tmp.rank1cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank1rate,
+        cast(cast(tmp.rank2cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank2rate,
+        cast(cast(tmp.rank3cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank3rate,
+        cast(cast(tmp.rank4cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank4rate,
+        cast(cast(tmp.rank5cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank5rate,
+        cast(cast(tmp.rank6cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank6rate
+      from 
+      ( select 
+            entry,
+            count(entry) racecnt,
+            count(flying) flyingcnt,
+            count(late) latecnt,
+            sum(case when waku = 1 then 1 else 0 end) waku1cnt,
+            sum(case when waku = 2 then 1 else 0 end) waku2cnt,
+            sum(case when waku = 3 then 1 else 0 end) waku3cnt,
+            sum(case when waku = 4 then 1 else 0 end) waku4cnt,
+            sum(case when waku = 5 then 1 else 0 end) waku5cnt,
+            sum(case when waku = 6 then 1 else 0 end) waku6cnt,
+            sum(case when rank = 1 then 1 else 0 end) rank1cnt,
+            sum(case when rank = 2 then 1 else 0 end) rank2cnt,
+            sum(case when rank = 3 then 1 else 0 end) rank3cnt,
+            sum(case when rank = 4 then 1 else 0 end) rank4cnt,
+            sum(case when rank = 5 then 1 else 0 end) rank5cnt,
+            sum(case when rank = 6 then 1 else 0 end) rank6cnt
+          from rec_racer
+          where
+            (ymd > '20130101' and ymd <= paramYmd)
+          group by entry
+          order by entry
+      ) tmp
+    order by entry
+  ;
+
+  END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+------------------------
+
+create table wakurank_jyo_racer (
+ymd varchar(8),
+jyocd varchar(2),
+entry smallint,
+wakurank varchar(2),
+wakurankcnt smallint,
+wakurankrate numeric(5,2)
+);
+
+--------------
+
+create table total_jyo_racer (
+ymd varchar(8),
+jyocd varchar(2),
+entry smallint,
+racecnt smallint,
+flyingcnt smallint,
+latecnt smallint,
+waku1cnt  smallint,
+waku2cnt  smallint,
+waku3cnt  smallint,
+waku4cnt  smallint,
+waku5cnt  smallint,
+waku6cnt  smallint,
+rank1cnt  smallint,
+rank2cnt  smallint,
+rank3cnt  smallint,
+rank4cnt  smallint,
+rank5cnt  smallint,
+rank6cnt  smallint,
+rank1rate numeric(5,2),
+rank2rate numeric(5,2),
+rank3rate numeric(5,2),
+rank4rate numeric(5,2),
+rank5rate numeric(5,2),
+rank6rate numeric(5,2)
+);
+
+
+
+
+------------------------------
+DROP FUNCTION IF EXISTS create_tmptables();
+
+CREATE OR REPLACE FUNCTION create_tmptables()
+RETURNS VOID AS $$
+  BEGIN
+    -- create tablespace tmpspace location 'y:/postgres';
+    -- set temp_tablespaces='tmpspace';
+    
+    drop table if exists temp_power_racer_2t;
+    create temp table temp_power_racer_2t (
+      ymd varchar(8),
+      entry smallint,
+      waku varchar(1),
+      powerrank smallint
+    ) tablespace tmpspace;
+   
+    drop table if exists temp_ppower_jyo_motor_2t;
+    create temp table temp_power_jyo_motor_2t (
+      ymd varchar(8),
+      jyocd varchar(2),
+      motorno smallint,
+      waku varchar(1),
+      powerrank smallint
+    ) tablespace tmpspace;
+
+    insert into temp_power_racer_2t
+      select * from power_racer_2t;
+    
+    insert into temp_power_jyo_motor_2t
+      select * from power_jyo_motor_2t;
+    
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS aggregate_wakurank_jyo_racer(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_wakurank_jyo_racer(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    delete from wakurank_jyo_racer where ymd = paramYmd;
+    
+    insert into wakurank_jyo_racer
+      select 
+        paramYmd,
+        tmp.jyocd,
+        tmp.entry, 
+        tmp.wakurank,
+        tmp.wakurankcnt,
+        cast(cast(tmp.wakurankcnt as float) / 
+          cast(
+            case when substring(wakurank from 1 for 1) = '1' then tr.waku1cnt
+                 when substring(wakurank from 1 for 1) = '2' then tr.waku2cnt
+                 when substring(wakurank from 1 for 1) = '3' then tr.waku3cnt
+                 when substring(wakurank from 1 for 1) = '4' then tr.waku4cnt
+                 when substring(wakurank from 1 for 1) = '5' then tr.waku5cnt
+                 when substring(wakurank from 1 for 1) = '6' then tr.waku6cnt
+                 end
+          as float)
+           * 100 as numeric(5,2)) wakurankrate
+      from (
+        select 
+          jyocd,
+          entry,
+          (waku::text || rank::text) as wakurank,
+          count((waku::text || rank::text)) as wakurankcnt
+        from rec_racer
+        where
+          (ymd > '20130101' and ymd <= paramYmd)
+        group by jyocd, entry, wakurank
+      ) tmp, 
+        total_jyo_racer tr
+      where tr.entry = tmp.entry
+            and tr.jyocd = tmp.jyocd
+      order by paramYmd, jyocd, tmp.entry
+      ;
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS aggregate_total_jyo_racer(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_total_jyo_racer(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    delete from total_jyo_racer where ymd = paramYmd;
+    
+    insert into total_jyo_racer
+      select 
+        paramYmd,
+        jyocd,
+        entry,
+        racecnt,
+        flyingcnt,
+        latecnt,
+        waku1cnt,
+        waku2cnt,
+        waku3cnt,
+        waku4cnt,
+        waku5cnt,
+        waku6cnt,
+        rank1cnt,
+        rank2cnt,
+        rank3cnt,
+        rank4cnt,
+        rank5cnt,
+        rank6cnt,
+        cast(cast(tmp.rank1cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank1rate,
+        cast(cast(tmp.rank2cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank2rate,
+        cast(cast(tmp.rank3cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank3rate,
+        cast(cast(tmp.rank4cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank4rate,
+        cast(cast(tmp.rank5cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank5rate,
+        cast(cast(tmp.rank6cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank6rate
+      from 
+      ( select 
+            jyocd,
+            entry,
+            count(entry) racecnt,
+            count(flying) flyingcnt,
+            count(late) latecnt,
+            sum(case when waku = 1 then 1 else 0 end) waku1cnt,
+            sum(case when waku = 2 then 1 else 0 end) waku2cnt,
+            sum(case when waku = 3 then 1 else 0 end) waku3cnt,
+            sum(case when waku = 4 then 1 else 0 end) waku4cnt,
+            sum(case when waku = 5 then 1 else 0 end) waku5cnt,
+            sum(case when waku = 6 then 1 else 0 end) waku6cnt,
+            sum(case when rank = 1 then 1 else 0 end) rank1cnt,
+            sum(case when rank = 2 then 1 else 0 end) rank2cnt,
+            sum(case when rank = 3 then 1 else 0 end) rank3cnt,
+            sum(case when rank = 4 then 1 else 0 end) rank4cnt,
+            sum(case when rank = 5 then 1 else 0 end) rank5cnt,
+            sum(case when rank = 6 then 1 else 0 end) rank6cnt
+          from rec_racer
+          where
+            (ymd > '20130101' and ymd <= paramYmd)
+          group by jyocd, entry
+          order by jyocd, entry
+      ) tmp
+    order by paramYmd, jyocd, entry
+  ;
+
+  END;
+$$ LANGUAGE plpgsql;
+
+
+------------------------

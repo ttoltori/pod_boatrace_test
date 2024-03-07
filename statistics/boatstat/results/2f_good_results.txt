@@ -1,0 +1,159 @@
+generate_stat_2F // 20170308_stat_2F_12_5_0.1_9999 // (odds < 5.1 || odds > 6.8) // 
+2018-09-13 00:06:51,779 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130006765,20180125,stat_2F.properties,10,11,-1100,129140,4844,14,88
+
+--------------------------------------
+generate_stat_2F // 20170308_stat_2F_12_5_0.1_9999 // (odds < 5.1 || odds > 6.7) // 
+2018-09-13 00:08:41,051 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,20180913000835,20180125,stat_2F.properties,10,11,-1100,129140,4844,14,88
+
+--------------------------------------
+generate_stat_2F // 20170308_stat_2F_12_5_0.1_9999 // (odds < 5.1 || odds > 6.3) // 
+2018-09-13 00:09:47,197 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130009183,20180125,stat_2F.properties,10,9,-900,146180,3571,15,88
+
+--------------------------------------
+20170308_stat_2F_12_5_1.5_2.5 // if (odds < 2.5 || odds > 3.5) 
+2018-09-13 00:24:00,901 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130024898,20180125,stat_2F.properties,10,3,-50,191930,892,32,97
+
+--------------------------------------
+20170308_stat_2F_12_5_1.5_2.5 // if (odds < 3 || odds > 4) 
+2018-09-13 00:26:22,318 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130026315,20180125,stat_2F.properties,10,1,-100,194420,425,26,95
+
+--------------------------------------
+20170308_stat_2F_12_5_2_3 // if (odds < 3.5 || odds > 4.5)
+2018-09-13 00:28:03,898 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130028893,20180125,stat_2F.properties,10,0,0,201851,524,26,105
+
+--------------------------------------
+20170308_stat_2F_12_5_2_3 // if (odds < 3.5 || odds > 5) 
+2018-09-13 00:28:59,325 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130028320,20180125,stat_2F.properties,10,0,0,203174,625,26,109
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_3.5 //if (odds < 4.5 || odds > 6.5)
+2018-09-13 00:34:46,984 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130034980,20180125,stat_2F.properties,10,0,0,208080,339,24,129
+
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_3.5 // if (odds < 4 || odds > 9)
+2018-09-13 00:36:53,723 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130036719,20180125,stat_2F.properties,10,0,0,206040,645,22,108
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_3.5 // if (odds < 3.5 || odds > 8.5)
+2018-09-13 00:38:13,261 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130038256,20180125,stat_2F.properties,10,1,-100,207240,959,24,105
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_3.5 // if (odds < 3 || odds > 8) 
+2018-09-13 00:39:57,988 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130039984,20180125,stat_2F.properties,10,4,210,211370,1531,28,105
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_3.5 // if (odds < 3 || odds > 8) 
+2018-09-13 00:41:37,333 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130041329,20180125,stat_2F.properties,10,4,210,212390,1513,28,105
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_3.5 // if (odds < 3 || odds > 10) 
+2018-09-13 01:32:00,750 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130132746,20180125,stat_2F.properties,10,7,260,196490,2518,25,98
+
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_3.5 // if (odds < 3 || odds > 7) {
+2018-09-13 00:42:26,089 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,20180913004285,20180125,stat_2F.properties,10,4,210,212340,1492,28,106
+
+--------------------------------------
+20170308_stat_2F_12_5_3_4 // if (odds < 4.5 || odds > 6.2)
+2018-09-13 00:50:43,802 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130050794,20180125,stat_2F.properties,10,3,150,200792,910,19,97
+
+--------------------------------------
+20170308_stat_2F_12_5_3.5_4.5 // if (odds < 5 || odds > 7) {
+2018-09-13 00:55:38,806 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130055801,20180125,stat_2F.properties,10,3,200,204700,1050,18,106
+
+--------------------------------------
+20170308_stat_2F_12_5_3.5_4.5 // if (odds < 4 || odds > 6)
+2018-09-13 00:59:16,921 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130059918,20180125,stat_2F.properties,10,5,450,196096,1809,20,95
+
+--------------------------------------
+20170308_stat_2F_12_5_3.5_4.5 // if (odds < 4.5 || odds > 7.5)
+2018-09-13 01:01:36,776 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130101772,20180125,stat_2F.properties,10,5,450,208566,1698,19,106
+
+--------------------------------------
+20170308_stat_2F_12_5_3.5_4.5 //if (odds < 4.5 || odds > 8)
+2018-09-13 01:03:20,550 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130103546,20180125,stat_2F.properties,10,5,450,206316,1798,18,105
+
+--------------------------------------
+20170308_stat_2F_12_5_3.5_4.5 //if (odds < 5 || odds > 8.5) 
+2018-09-13 01:04:32,985 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130104982,20180125,stat_2F.properties,10,3,200,207047,1375,17,107
+
+--------------------------------------
+20170308_stat_2F_12_5_2_4 // if (odds < 4 || odds > 12)
+2018-09-13 01:43:36,789 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130143786,20180125,stat_2F.properties,10,3,-300,200700,2638,19,97
+
+--------------------------------------
+20170308_stat_2F_12_5_2_4 // if (odds < 4.5 || odds > 12)
+2018-09-13 01:45:41,678 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130145674,20180125,stat_2F.properties,10,2,-200,208994,1862,18,105
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_4 // if (odds < 4.5 || odds > 12)
+2018-09-13 01:54:41,273 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130154269,20180125,stat_2F.properties,10,2,-200,205766,1789,17,104
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_4 // if (odds < 4.2 || odds > 13)
+2018-09-13 01:56:23,237 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130156233,20180125,stat_2F.properties,10,2,-200,205766,2051,18,102
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_4 // if (odds < 4.2 || odds > 18)
+2018-09-13 01:57:53,453 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130157446,20180125,stat_2F.properties,10,2,-200,204845,2077,18,102
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_4.5 // if (odds < 4 || odds > 12) 
+2018-09-13 02:14:37,675 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130214671,20180125,stat_2F.properties,10,7,250,200416,3862,18,99
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_4.5 // if (odds < 4 || odds > 12) 
+2018-09-13 02:14:37,675 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130214671,20180125,stat_2F.properties,10,7,250,200416,3862,18,99
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_5// if (odds < 4.5 || odds > 15)
+2018-09-13 02:21:51,343 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130221339,20180125,stat_2F.properties,10,8,610,190425,4523,16,99
+
+--------------------------------------
+20170308_stat_2F_12_5_2.5_5// if (odds < 4.3 || odds > 20)
+2018-09-13 02:23:28,234 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809130223230,20180125,stat_2F.properties,10,9,950,190042,5042,16,99
+
+______________________________________________
+집중탐구
+20170308_stat_2F_12_5_2.5_5// if (odds < 4.3 || odds > 20)
+2018-09-25 23:59:20,305 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809252359301,20180125,stat_2F.properties,10,11,750,387186,5373,16,98
+■bet人気=1 or 2
+  bet回数/bet金額/払戻 = 1775 / 177500 / 182992
+  
+■場除外 3,6,7,21,24 (収益率75以下）
+  bet回数/bet金額/払戻 = 4314 / 431400 / 437994
+  
+■レース 3 / 7 / 9 / 10 
+  収益率＝ 115 / 107 / 116 / 112
+
+■全勝率_1 = 2～3
+  bet回数/収益率＝ 105 / 44
+  
+■全勝率_6 = 0～1
+  bet回数/収益率＝ 49 / 43
+
+■全2連率_3 = 50~60, 60~70
+  bet回数/収益率＝ 318 / 140, 41 / 114
+  
+■全2連率_4 = 60~70
+  bet回数/収益率＝ 55 / 174
+
+■全3連率_2 = 0~10
+  bet回数/収益率＝ 21 / 21
+
+■全3連率_4 = 80~90
+  bet回数/収益率＝ 22 / 61
+
+■全3連率_6 = 80~90
+  bet回数/収益率＝ 14 / 31
+
+■早見_2 = 6R
+  bet回数/収益率＝ 256 / 66
+  
+■進入固定=安定板使用
+  bet回数/収益率＝ 160 / 82
+------------------------------
+20170308_stat_2F_12_5_2.5_5// if (odds < 2.5 || odds > 5)
+2018-09-26 01:21:21,967 [main] INFO  c.p.b.s.SimulationWorkerBase.writeUserStatus - 総括,201809260121963,20180125,stat_2F.properties,10,35,770,308999,10149,27,90

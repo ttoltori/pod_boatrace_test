@@ -1,0 +1,46 @@
+"70101 0.1"  
+"=================================="  
+Boosting round 0: training loss = 1.7211, validation loss = 1.7107
+Boosting round 49: training loss = 1.6008, validation loss = 1.6451
+Boosting round 99: training loss = 1.5584, validation loss = 1.6484
+Training set score: 0.3653
+Test set score: 0.2927
+              precision    recall  f1-score   support
+
+           1       0.22      0.04      0.07      5634
+           2       0.31      0.64      0.42      8374
+           3       0.29      0.33      0.31      6911
+           4       0.28      0.20      0.23      5413
+           5       0.24      0.10      0.14      3627
+           6       0.22      0.07      0.11      2509
+
+    accuracy                           0.29     32468
+   macro avg       0.26      0.23      0.21     32468
+weighted avg       0.27      0.29      0.25     32468
+
+BoatWebSocketServer "boosting_type=gbdt,learning_rate=0.1"
+start: 2023/05/09_ 0:00:21.71
+end  : 2023/05/09_ 0:00:30.88
+"70101 0.1"  
+"=================================="  
+Boosting round 0: training loss = 1.7210, validation loss = 1.7106
+Boosting round 49: training loss = 1.6007, validation loss = 1.6452
+Boosting round 99: training loss = 1.5582, validation loss = 1.6482
+Training set score: 0.3660
+Test set score: 0.2946
+              precision    recall  f1-score   support
+
+           1       0.24      0.04      0.07      5626
+           2       0.31      0.64      0.42      8367
+           3       0.29      0.34      0.31      6907
+           4       0.28      0.20      0.23      5405
+           5       0.24      0.10      0.14      3625
+           6       0.22      0.07      0.11      2507
+
+    accuracy                           0.29     32437
+   macro avg       0.26      0.23      0.21     32437
+weighted avg       0.27      0.29      0.25     32437
+
+BoatWebSocketServer "boosting_type=gbdt,learning_rate=0.1"
+start: 2023/05/09_15:24:40.31
+end  : 2023/05/09_15:24:45.15

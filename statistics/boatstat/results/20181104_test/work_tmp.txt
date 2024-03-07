@@ -1,0 +1,37 @@
+select 
+  betamount, income, balance, 
+  cast( (cast(hitcnt as float)/ cast(betcnt as float) *100) as numeric(5,2)) hitrate,
+  cast( (cast(income as float)/ cast(betamount as float) *100) as numeric(5,2)) incomerate,
+  (betcnt / (365 * 5)) dayilbet,
+  cast( avgodds as  numeric(5,2)) avgodds
+from (
+select 
+  sum ( case nirenhukuno when '12' then 100 else 100 end ) betamount,
+  sum ( case nirenhukuno when '12' then nirenhukuprize else 0 end ) income,
+  sum ( case nirenhukuno when '12' then 1 else 1 end ) betcnt,
+  sum ( case nirenhukuno when '12' then 1 else 0 end ) hitcnt,
+  sum ( case nirenhukuno when '12' then nirenhukuprize - 100 else -100 end ) balance,
+  avg(odds.odds) avgodds
+from rec_race race
+  , rec_fame_rank3 famerank
+  , rec_odds odds
+where race.ymd >= '20120101' and race.ymd <= '20161231'
+  and race.ymd = famerank.ymd and race.jyocd = famerank.jyocd and race.raceno = famerank.raceno
+  and race.ymd = odds.ymd and race.jyocd = odds.jyocd and race.raceno = odds.raceno and odds.bettype = '2F' and odds.kumiban = '12'
+  and (
+    odds.odds >= 1.9 and odds.odds <= 4.5
+  )
+
+) tmp
+;
+
+  and ( 
+      (substring(nationwiningrank from 1 for 1) in ('1', '2')) 
+       and
+      (substring(nationwiningrank from 2 for 1) not in ('3','4','5','6'))
+  )
+
+  and ( 
+      (win1_rank1_waku = '1' and win2_rank1_waku = '1') 
+     or (win1_rank1_waku = '2' and win2_rank1_waku = '2')
+  )

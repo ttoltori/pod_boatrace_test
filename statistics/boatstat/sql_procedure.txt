@@ -1,0 +1,1122 @@
+
+------------------------------------------------------------------------------------------------
+作業用temp
+------------------------------------------------------------------------------------------------
+select 
+  tmp1.bettype,
+  tmp1.avghitcount,
+  tmp1.totalincome,
+  tmp1.avghitrate,
+  tmp1.avgincomerate,
+  tmp2.avghitcount,
+  tmp2.totalincome,
+  tmp2.avghitrate,
+  tmp2.avgincomerate
+from
+  (
+    select
+      bettype, 
+      sum(hitcount) avghitcount,
+      (sum(prize) - (sum(hitcount) * 100)) totalincome,
+      cast(avg(hitrate) as numeric(5,2)) avghitrate, 
+      cast(avg(incomerate) as numeric(5,2)) avgincomerate
+    from stat_result
+    group by bettype
+  ) tmp1,
+  (
+    select
+      bettype, 
+      sum(hitcount) avghitcount,
+      (sum(prize) - (sum(hitcount) * 100)) totalincome,
+      cast(avg(hitrate) as numeric(5,2)) avghitrate , 
+      cast(avg(incomerate) as numeric(5,2)) avgincomerate
+    from stat_result
+    where patterncnt > 10
+      and (hitrate * incomerate) > 1
+    group by bettype
+  ) tmp2
+where
+  tmp1.bettype = tmp2.bettype
+;
+
+
+DROP FUNCTION IF EXISTS aggregate_daily(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_day_records(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    delete from total_racer where ymd = paramYmd;
+    
+    
+  END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS calculate_power_racer_2T(VARCHAR(8));
+CREATE OR REPLACE FUNCTION calculate_power_racer_2T(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    -- 選手毎枠毎の枠→２連進入能力値
+    delete from power_racer_2t where ymd = paramYmd;
+    
+    insert into power_racer_2tf
+      select 
+        paramYmd,
+        entry, 
+        substring(wakurank from 1 for 1) waku, 
+        sum(totalrank) / count(totalrank) as powerrank
+      from power_racer
+      where
+        wakurank = any (
+          case 
+      	     when substring(wakurank from 1 for 1) = '1' then array['11']
+               when substring(wakurank from 1 for 1) = '2' then array['21', '22']
+               when substring(wakurank from 1 for 1) = '3' then array['31', '32']
+               when substring(wakurank from 1 for 1) = '4' then array['41', '42']
+               when substring(wakurank from 1 for 1) = '5' then array['51', '52']
+               when substring(wakurank from 1 for 1) = '6' then array['61', '62']
+          end
+        )
+      group by entry, substring(wakurank from 1 for 1)
+      order by entry, substring(wakurank from 1 for 1)
+    ;
+      
+  END;
+$$ LANGUAGE plpgsql;
+
+
+
+select 
+  race.*,
+  (select powerrank from temp_power_racer_2t where entry = race.entry1 and waku = '1') as entry1powerrank,
+  (select powerrank from temp_power_racer_2t where entry = race.entry2 and waku = '2') as entry2powerrank,
+  (select powerrank from temp_power_racer_2t where entry = race.entry3 and waku = '3') as entry3powerrank,
+  (select powerrank from temp_power_racer_2t where entry = race.entry4 and waku = '4') as entry4powerrank,
+  (select powerrank from temp_power_racer_2t where entry = race.entry5 and waku = '5') as entry5powerrank,
+  (select powerrank from temp_power_racer_2t where entry = race.entry6 and waku = '6') as entry6powerrank,
+  (select powerrank from temp_power_jyo_motor_2t where motorno = race.motor1 and waku = '1') as motor1powerrank,
+  (select powerrank from temp_power_jyo_motor_2t where motorno = race.motor2 and waku = '2') as motor2powerrank,
+  (select powerrank from temp_power_jyo_motor_2t where motorno = race.motor3 and waku = '3') as motor3powerrank,
+  (select powerrank from temp_power_jyo_motor_2t where motorno = race.motor4 and waku = '4') as motor4powerrank,
+  (select powerrank from temp_power_jyo_motor_2t where motorno = race.motor5 and waku = '5') as motor5powerrank,
+  (select powerrank from temp_power_jyo_motor_2t where motorno = race.motor6 and waku = '6') as motor6powerrank
+from rec_race race
+where rec.y = 2013 and rec.m = 4
+;
+
+select
+  race.*,
+  
+from rec_race race, power_racer_2t pr2
+where 
+  (race.entry1 = pr2.entry and pr2.waku = '1') or
+  (race.entry2 = pr2.entry and pr2.waku = '2') or
+  
+  
+select 
+  entry, 
+  array_agg(waku) a,
+  array_agg(powerrank) b
+from power_racer_2t
+group by entry
+limit 10 offset 0;
+
+
+and pr2.entry in (race.entry1, race.entry2, race.entry3, race.entry4, race.entry5, race.entry6)
+
+select 
+  race.*
+from rec_race race, power_racer_2t pr2
+where race.entry1 = pr2.entry
+and race.entry2 = pr2.entry
+;
+
+DROP FUNCTION IF EXISTS xxx(VARCHAR(8), VARCHAR(120));
+CREATE OR REPLACE FUNCTION xxx(paramYmd VARCHAR(8), paramPath VARCHAR(120))
+RETURNS VOID AS $$
+  BEGIN
+
+  END;
+$$ LANGUAGE plpgsql;
+------------------------------------------------------------------------------------------------
+
+
+------------------------
+
+------------------------
+日次バッチ
+------------------------
+-- do_dailyjob(年月日, 選手ランク数, モータランク数, 平均タイムランク数, ベットタイプ)
+DROP FUNCTION IF EXISTS generate_power(VARCHAR(8), smallint, smallint, smallint, VARCHAR(120));
+
+CREATE OR REPLACE FUNCTION generate_power(
+  paramYmd VARCHAR(8), 
+  paramSectionRacer smallint,
+  paramSectionAvgtime smallint,
+  paramSectionJyoMotor smallint,
+  paramPath VARCHAR(120)
+)
+RETURNS VOID AS $$
+  BEGIN
+    perform aggregate_total(paramYmd);
+    
+    perform aggregate_wakurank(paramYmd);
+    
+    perform calculate_power(paramYmd, paramSectionRacer, paramSectionAvgtime, paramSectionJyoMotor);
+    
+    perform calculate_power_bettype(paramYmd, '1TF');
+    perform calculate_power_bettype(paramYmd, '2TF');
+    -- perform calculate_power_bettype(paramYmd, '3TF');
+    
+    perform export_power(paramYmd, paramPath);
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS generate_stat(VARCHAR(8), VARCHAR(3), 
+int, int, numeric(5,2), numeric(5,2), numeric(5,2), numeric(5,2), VARCHAR(120));
+CREATE OR REPLACE FUNCTION generate_stat(
+paramYmd VARCHAR(8), 
+paramBettype VARCHAR(3), 
+paramMinPatternCnt int, 
+paramMaxPatternCnt int, 
+paramMinHitRate numeric(5,2), 
+paramMaxHitRate numeric(5,2), 
+paramMinIncomeRate numeric(5,2),
+paramMaxIncomeRate numeric(5,2),
+paramPath VARCHAR(120))
+RETURNS VOID AS $$
+  BEGIN
+  
+    raise notice 'generate_stat(%s,%s...) start', paramYmd, paramBettype;
+
+    perform stat_make_result(paramBettype);
+
+    perform stat_export(paramYmd, paramBettype, paramPath,
+      paramMinPatternCnt, 
+      paramMaxPatternCnt, 
+      paramMinHitRate, 
+      paramMaxHitRate, 
+      paramMinIncomeRate, 
+      paramMaxIncomeRate
+      );
+
+    raise notice 'generate_stat(%s,%s...) end', paramYmd, paramBettype;
+  END;
+$$ LANGUAGE plpgsql;
+
+
+------------------------
+
+------------------------
+パタン化
+------------------------
+DROP FUNCTION IF EXISTS stat_export(VARCHAR(8), VARCHAR(3), VARCHAR(120),
+int, int, numeric(5,2), numeric(5,2), numeric(5,2), numeric(5,2));
+CREATE OR REPLACE FUNCTION stat_export(
+paramYmd VARCHAR(8), 
+paramBettype VARCHAR(3), 
+paramPath VARCHAR(120),
+paramMinPatternCnt int, 
+paramMaxPatternCnt int, 
+paramMinHitRate numeric(5,2), 
+paramMaxHitRate numeric(5,2), 
+paramMinIncomeRate numeric(5,2),
+paramMaxIncomeRate numeric(5,2))
+RETURNS VOID AS $$
+  BEGIN
+  
+    raise notice 'stat_export(%s,%s,%s...) start', paramYmd, paramBettype, paramPath;
+
+    EXECUTE format('copy 
+      (select * from stat_result 
+        where bettype = ''%s''
+          and (patterncnt >= %s and patterncnt <= %s)
+          and (hitrate >= %s and hitrate <= %s )
+          and (incomerate >= %s and incomerate <= %s )
+      ) 
+      to ''%s'' with csv'
+     ,paramBettype 
+     ,paramMinPatternCnt, paramMaxPatternCnt
+     ,paramMinHitRate, paramMaxHitRate
+     ,paramMinIncomeRate, paramMaxIncomeRate
+     ,paramPath || paramYmd || '_stat_bettype_' || paramBettype || '.csv' );
+
+    raise notice 'stat_export(%s,%s,%s...) end', paramYmd, paramBettype, paramPath;
+  END;
+$$ LANGUAGE plpgsql;
+
+
+------------------------
+DROP FUNCTION IF EXISTS stat_make_result(VARCHAR(3));
+CREATE OR REPLACE FUNCTION stat_make_result(paramBettype VARCHAR(3)
+)
+RETURNS VOID AS $$
+  BEGIN
+  
+    raise notice 'stat_make_result(%s) start', paramBettype;
+    raise notice '  delete from stat_result where bettype = %s', paramBettype;
+  
+    delete from stat_result where bettype = paramBettype;
+    
+    raise notice '  insert into  stat_result...';
+    EXECUTE format('
+      insert into  stat_result
+        select 
+          ''ptnracer'',
+          ''%s'',
+          ptntmp.ptnracer, 
+          ptntmp.ptncnt, 
+          (ptntmp.ptncnt * 100) bet, 
+          stattmp.kumiban,
+          stattmp.betcnt,
+          stattmp.prize,
+          cast( (cast(stattmp.betcnt as float) / cast(ptntmp.ptncnt as float) ) as numeric(5,2) ) hitrate,
+          cast( (cast(stattmp.prize as float) / cast((ptntmp.ptncnt * 100) as float) ) as numeric(7,2) ) incomerate
+        from
+          (
+            select
+              stat.ptnracer, 
+              ( 
+                case ''%s''
+                  when ''1T'' then race.tansyono
+                  when ''2T'' then race.nirentanno
+                  when ''2F'' then race.nirenhukuno
+                  when ''3T'' then race.sanrentanno
+                  when ''3F'' then race.sanrenhukuno
+                 end
+              ) kumiban,
+              count(stat.ptnracer) betcnt, 
+              sum(
+                case ''%s''
+                  when ''1T'' then race.tansyoprize
+                  when ''2T'' then race.nirentanprize
+                  when ''2F'' then race.nirenhukuprize
+                  when ''3T'' then race.sanrentanprize
+                  when ''3F'' then race.sanrenhukuprize
+                 end
+                ) prize
+            from rec_race race, stat_pattern stat
+            where race.ymd = stat.ymd
+              and race.jyocd = stat.jyocd
+              and race.raceno = stat.raceno
+            group by stat.ptnracer, kumiban
+          ) stattmp,
+          (
+            select 
+              ptnracer, count(ptnracer) ptncnt
+            from stat_pattern
+            group by ptnracer
+            order by ptncnt desc
+          ) ptntmp
+        where stattmp.ptnracer = ptntmp.ptnracer
+        order by incomerate desc, hitrate desc, ptncnt desc
+      ', paramBettype, paramBettype, paramBettype);
+
+    raise notice 'stat_make_result(%s) end', paramBettype;
+    
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS stat_make_pattern();
+CREATE OR REPLACE FUNCTION stat_make_pattern()
+RETURNS VOID AS $$
+  BEGIN
+    raise notice 'stat_make_pattern() start';
+    raise notice '  delete from stat_pattern';
+    
+    delete from stat_pattern;
+    
+    raise notice '  insert into stat_pattern...';
+    
+    insert into stat_pattern
+      select 
+        ymd, jyocd, raceno, bettype,
+        '3ptn' as patterntype,
+        concat_ws('-', 
+          lpad(entry1rank::text, 2, '0'),
+          lpad(entry2rank::text, 2, '0'), 
+          lpad(entry3rank::text, 2, '0'), 
+          lpad(entry4rank::text, 2, '0'),
+          lpad(entry5rank::text, 2, '0'),
+          lpad(entry6rank::text, 2, '0')
+        ) ptnracer, 
+        concat_ws('-', 
+          lpad(motorno1rank::text, 2, '0'),
+          lpad(motorno2rank::text, 2, '0'), 
+          lpad(motorno3rank::text, 2, '0'), 
+          lpad(motorno4rank::text, 2, '0'), 
+          lpad(motorno5rank::text, 2, '0'),
+          lpad(motorno6rank::text, 2, '0')
+        ) ptnmotor, 
+        concat_ws('-', 
+          lpad(avgtime1rank::text, 2, '0'),
+          lpad(avgtime2rank::text, 2, '0'),
+          lpad(avgtime3rank::text, 2, '0'),
+          lpad(avgtime4rank::text, 2, '0'),
+          lpad(avgtime5rank::text, 2, '0'),
+          lpad(avgtime6rank::text, 2, '0')
+        ) ptntime
+      from stat_race 
+      order by ymd, jyocd, raceno, bettype, patterntype
+    ;
+    
+    raise notice 'stat_make_pattern() end';
+
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+ファイル出力
+------------------------
+DROP FUNCTION IF EXISTS export_power(VARCHAR(8), VARCHAR(120));
+CREATE OR REPLACE FUNCTION export_power(paramYmd VARCHAR(8), paramPath VARCHAR(120))
+RETURNS VOID AS $$
+  BEGIN
+    EXECUTE format('copy (select * from power_racer where ymd = ''%s'') to ''%s'' with csv'
+     ,paramYmd ,paramPath || paramYmd || '_power_racer.csv' );
+     
+    EXECUTE format('copy (select * from power_avgtime where ymd = ''%s'') to ''%s'' with csv'
+     ,paramYmd ,paramPath || paramYmd || '_power_avgtime.csv' );
+     
+    EXECUTE format('copy (select * from power_jyo_motor where ymd = ''%s'') to ''%s'' with csv'
+     ,paramYmd ,paramPath || paramYmd || '_power_jyo_motor.csv' );
+     
+    EXECUTE format('copy (select * from power_racer_bettype where ymd = ''%s'') to ''%s'' with csv'
+     ,paramYmd ,paramPath || paramYmd || '_power_racer_bettype.csv' );
+     
+    EXECUTE format('copy (select * from power_avgtime_bettype where ymd = ''%s'') to ''%s'' with csv'
+     ,paramYmd ,paramPath || paramYmd || '_power_avgtime_bettype.csv' );
+
+    EXECUTE format('copy (select * from power_jyo_motor_bettype where ymd = ''%s'') to ''%s'' with csv'
+     ,paramYmd ,paramPath || paramYmd || '_power_jyo_motor_bettype.csv' );
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+集約
+------------------------
+DROP FUNCTION IF EXISTS calculate_power_bettype(VARCHAR(8), VARCHAR(3));
+
+CREATE OR REPLACE FUNCTION calculate_power_bettype(paramYmd VARCHAR(8), paramBettype VARCHAR(3))
+RETURNS VOID AS $$
+  BEGIN
+    perform calculate_power_racer_bettype(paramYmd, paramBettype);
+    
+    perform calculate_power_avgtime_bettype(paramYmd, paramBettype);
+    
+    perform calculate_power_jyo_motor_bettype(paramYmd, paramBettype);
+    
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS aggregate_total(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_total(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    perform aggregate_total_racer(paramYmd);
+    
+    perform aggregate_total_avgtime(paramYmd);
+    
+    perform aggregate_total_jyo_motor(paramYmd);
+    
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS aggregate_wakurank(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_wakurank(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    perform aggregate_wakurank_racer(paramYmd);
+    
+    perform aggregate_wakurank_avgtime(paramYmd);
+    
+    perform aggregate_wakurank_jyo_motor(paramYmd);
+    
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS calculate_power(VARCHAR(8), smallint, smallint, smallint);
+
+CREATE OR REPLACE FUNCTION calculate_power(paramYmd VARCHAR(8), sectionRacer smallint, sectionAvgtime smallint, sectionJyoMotor smallint)
+RETURNS VOID AS $$
+  BEGIN
+    perform calculate_power_racer(paramYmd, sectionRacer);
+    
+    perform calculate_power_avgtime(paramYmd, sectionAvgtime);
+    
+    perform calculate_power_jyo_motor(paramYmd, sectionJyoMotor);
+    
+  END;
+$$ LANGUAGE plpgsql;
+
+
+------------------------
+平均タイム集計
+------------------------
+DROP FUNCTION IF EXISTS calculate_power_avgtime_bettype(VARCHAR(8), VARCHAR(3));
+
+CREATE OR REPLACE FUNCTION calculate_power_avgtime_bettype(paramYmd VARCHAR(8), paramBettype VARCHAR(3))
+RETURNS VOID AS $$
+  BEGIN
+    delete from power_avgtime_bettype where bettype = paramBettype;
+    
+    IF paramBettype = '1TF' THEN
+      insert into power_avgtime_bettype
+        select 
+          paramYmd,
+          paramBettype,
+          avgtime, 
+          substring(wakurank from 1 for 1) waku, 
+          sum(totalrank) / count(totalrank) as powerrank
+        from power_avgtime
+        where
+          wakurank = any (
+            case 
+                 when substring(wakurank from 1 for 1) = '1' then array['11']
+                 when substring(wakurank from 1 for 1) = '2' then array['21']
+                 when substring(wakurank from 1 for 1) = '3' then array['31']
+                 when substring(wakurank from 1 for 1) = '4' then array['41']
+                 when substring(wakurank from 1 for 1) = '5' then array['51']
+                 when substring(wakurank from 1 for 1) = '6' then array['61']
+            end
+          )
+        group by paramYmd, paramBettype, avgtime, substring(wakurank from 1 for 1)
+        order by paramYmd, paramBettype, avgtime, substring(wakurank from 1 for 1);
+    ELSIF paramBettype = '2TF' THEN
+      insert into power_avgtime_bettype
+        select 
+          paramYmd,
+          paramBettype,
+          avgtime, 
+          substring(wakurank from 1 for 1) waku, 
+          sum(totalrank) / count(totalrank) as powerrank
+        from power_avgtime
+        where
+          wakurank = any (
+            case 
+                 when substring(wakurank from 1 for 1) = '1' then array['11']
+                 when substring(wakurank from 1 for 1) = '2' then array['21', '22']
+                 when substring(wakurank from 1 for 1) = '3' then array['31', '32']
+                 when substring(wakurank from 1 for 1) = '4' then array['41', '42']
+                 when substring(wakurank from 1 for 1) = '5' then array['51', '52']
+                 when substring(wakurank from 1 for 1) = '6' then array['61', '62']
+            end
+          )
+        group by paramYmd, paramBettype, avgtime, substring(wakurank from 1 for 1)
+        order by paramYmd, paramBettype, avgtime, substring(wakurank from 1 for 1);
+    ELSIF paramBettype = '3TF' THEN
+      insert into power_avgtime_bettype
+        select 
+          paramYmd,
+          paramBettype,
+          avgtime, 
+          substring(wakurank from 1 for 1) waku, 
+          sum(totalrank) / count(totalrank) as powerrank
+        from power_avgtime
+        where
+          wakurank = any (
+            case 
+                 when substring(wakurank from 1 for 1) = '1' then array['11']
+                 when substring(wakurank from 1 for 1) = '2' then array['21', '22']
+                 when substring(wakurank from 1 for 1) = '3' then array['31', '32', '33']
+                 when substring(wakurank from 1 for 1) = '4' then array['41', '42', '43']
+                 when substring(wakurank from 1 for 1) = '5' then array['51', '52', '53']
+                 when substring(wakurank from 1 for 1) = '6' then array['61', '62', '63']
+            end
+          )
+        group by paramYmd, paramBettype, avgtime, substring(wakurank from 1 for 1)
+        order by paramYmd, paramBettype, avgtime, substring(wakurank from 1 for 1);
+    END IF;
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS calculate_power_avgtime(VARCHAR(8), smallint);
+
+CREATE OR REPLACE FUNCTION calculate_power_avgtime(paramYmd VARCHAR(8), section smallint)
+RETURNS VOID AS $$
+  BEGIN
+    -- 平均タイム毎の枠→能力値
+    delete from power_avgtime;
+    
+    insert into power_avgtime
+      select 
+        paramYmd,
+        avgtime, 
+        wakurank, 
+        wakurankcnt,
+        wakurankrate,
+        tmp.cntrank, 
+        tmp.raterank, 
+        ((tmp.cntrank+tmp.raterank) / 2) as totalrank
+      from (
+        select avgtime, wakurank, wakurankcnt, wakurankrate,
+          ntile(section) over (partition by wakurank order by max(wakurankcnt) desc) as cntrank,
+          ntile(section) over (partition by wakurank order by max(wakurankrate) desc) as raterank
+        from wakurank_avgtime
+        group by paramYmd, avgtime, wakurank, wakurankcnt, wakurankrate
+        ) tmp
+      order by paramYmd, avgtime, wakurank
+    ;
+      
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS aggregate_wakurank_avgtime(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_wakurank_avgtime(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    delete from wakurank_avgtime;
+    
+    insert into wakurank_avgtime
+      select 
+        paramYmd,
+        tmp.avgtime, 
+        tmp.wakurank,
+        tmp.wakurankcnt,
+        cast(cast(tmp.wakurankcnt as float) / 
+          cast(
+            case when substring(wakurank from 1 for 1) = '1' then tr.waku1cnt
+                 when substring(wakurank from 1 for 1) = '2' then tr.waku2cnt
+                 when substring(wakurank from 1 for 1) = '3' then tr.waku3cnt
+                 when substring(wakurank from 1 for 1) = '4' then tr.waku4cnt
+                 when substring(wakurank from 1 for 1) = '5' then tr.waku5cnt
+                 when substring(wakurank from 1 for 1) = '6' then tr.waku6cnt
+                 end
+          as float)
+           * 100 as numeric(5,2)) wakurankrate
+      from (
+        select 
+          avgtime,
+          (waku::text || rank::text) as wakurank,
+          count((waku::text || rank::text)) as wakurankcnt
+        from rec_racer
+        where
+          (ymd > '20130101' and ymd <= paramYmd)
+        group by avgtime, wakurank
+      ) tmp, 
+        total_avgtime tr
+      where tr.avgtime = tmp.avgtime
+      order by paramYmd, tmp.avgtime
+      ;
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS aggregate_total_avgtime(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_total_avgtime(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    delete from total_avgtime;
+    
+    insert into total_avgtime
+      select 
+        paramYmd,
+        avgtime,
+        racecnt,
+        flyingcnt,
+        latecnt,
+        waku1cnt,
+        waku2cnt,
+        waku3cnt,
+        waku4cnt,
+        waku5cnt,
+        waku6cnt,
+        rank1cnt,
+        rank2cnt,
+        rank3cnt,
+        rank4cnt,
+        rank5cnt,
+        rank6cnt,
+        cast(cast(tmp.rank1cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank1rate,
+        cast(cast(tmp.rank2cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank2rate,
+        cast(cast(tmp.rank3cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank3rate,
+        cast(cast(tmp.rank4cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank4rate,
+        cast(cast(tmp.rank5cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank5rate,
+        cast(cast(tmp.rank6cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank6rate
+      from 
+      ( select 
+            avgtime,
+            count(avgtime) racecnt,
+            count(flying) flyingcnt,
+            count(late) latecnt,
+            sum(case when waku = 1 then 1 else 0 end) waku1cnt,
+            sum(case when waku = 2 then 1 else 0 end) waku2cnt,
+            sum(case when waku = 3 then 1 else 0 end) waku3cnt,
+            sum(case when waku = 4 then 1 else 0 end) waku4cnt,
+            sum(case when waku = 5 then 1 else 0 end) waku5cnt,
+            sum(case when waku = 6 then 1 else 0 end) waku6cnt,
+            sum(case when rank = 1 then 1 else 0 end) rank1cnt,
+            sum(case when rank = 2 then 1 else 0 end) rank2cnt,
+            sum(case when rank = 3 then 1 else 0 end) rank3cnt,
+            sum(case when rank = 4 then 1 else 0 end) rank4cnt,
+            sum(case when rank = 5 then 1 else 0 end) rank5cnt,
+            sum(case when rank = 6 then 1 else 0 end) rank6cnt
+          from rec_racer
+          where
+            (ymd > '20130101' and ymd <= paramYmd)
+          group by avgtime
+          order by avgtime
+      ) tmp
+    order by avgtime
+  ;
+
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+モータ集計
+------------------------
+DROP FUNCTION IF EXISTS calculate_power_jyo_motor_bettype(VARCHAR(8), VARCHAR(3));
+
+CREATE OR REPLACE FUNCTION calculate_power_jyo_motor_bettype(paramYmd VARCHAR(8), paramBettype VARCHAR(3))
+RETURNS VOID AS $$
+  BEGIN
+    delete from power_jyo_motor_bettype where bettype = paramBettype;
+    
+    IF paramBettype = '1TF' THEN
+      insert into power_jyo_motor_bettype
+        select 
+          paramYmd,
+          paramBettype,
+          jyocd,
+          motorno,
+          substring(wakurank from 1 for 1) waku, 
+          sum(totalrank) / count(totalrank) as powerrank
+        from power_jyo_motor
+        where
+          wakurank = any (
+            case 
+                 when substring(wakurank from 1 for 1) = '1' then array['11']
+                 when substring(wakurank from 1 for 1) = '2' then array['21']
+                 when substring(wakurank from 1 for 1) = '3' then array['31']
+                 when substring(wakurank from 1 for 1) = '4' then array['41']
+                 when substring(wakurank from 1 for 1) = '5' then array['51']
+                 when substring(wakurank from 1 for 1) = '6' then array['61']
+            end
+          )
+        group by paramYmd, paramBettype, jyocd, motorno, substring(wakurank from 1 for 1)
+        order by paramYmd, paramBettype, jyocd, motorno, substring(wakurank from 1 for 1);
+    ELSIF paramBettype = '2TF' THEN
+      insert into power_jyo_motor_bettype
+        select 
+          paramYmd,
+          paramBettype,
+          jyocd,
+          motorno,
+          substring(wakurank from 1 for 1) waku, 
+          sum(totalrank) / count(totalrank) as powerrank
+        from power_jyo_motor
+        where
+          wakurank = any (
+            case 
+                 when substring(wakurank from 1 for 1) = '1' then array['11']
+                 when substring(wakurank from 1 for 1) = '2' then array['21', '22']
+                 when substring(wakurank from 1 for 1) = '3' then array['31', '32']
+                 when substring(wakurank from 1 for 1) = '4' then array['41', '42']
+                 when substring(wakurank from 1 for 1) = '5' then array['51', '52']
+                 when substring(wakurank from 1 for 1) = '6' then array['61', '62']
+            end
+          )
+        group by paramYmd, paramBettype, jyocd, motorno, substring(wakurank from 1 for 1)
+        order by paramYmd, paramBettype, jyocd, motorno, substring(wakurank from 1 for 1);
+    ELSIF paramBettype = '3TF' THEN
+      insert into power_jyo_motor_bettype
+        select 
+          paramYmd,
+          paramBettype,
+          jyocd,
+          motorno,
+          substring(wakurank from 1 for 1) waku, 
+          sum(totalrank) / count(totalrank) as powerrank
+        from power_jyo_motor
+        where
+          wakurank = any (
+            case 
+                 when substring(wakurank from 1 for 1) = '1' then array['11']
+                 when substring(wakurank from 1 for 1) = '2' then array['21', '22']
+                 when substring(wakurank from 1 for 1) = '3' then array['31', '32', '33']
+                 when substring(wakurank from 1 for 1) = '4' then array['41', '42', '43']
+                 when substring(wakurank from 1 for 1) = '5' then array['51', '52', '53']
+                 when substring(wakurank from 1 for 1) = '6' then array['61', '62', '63']
+            end
+          )
+        group by paramYmd, paramBettype, jyocd, motorno, substring(wakurank from 1 for 1)
+        order by paramYmd, paramBettype, jyocd, motorno, substring(wakurank from 1 for 1);
+    END IF;
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS calculate_power_jyo_motor(VARCHAR(8), smallint);
+
+CREATE OR REPLACE FUNCTION calculate_power_jyo_motor(paramYmd VARCHAR(8), section smallint)
+RETURNS VOID AS $$
+  BEGIN
+    -- 場毎モータ毎の枠→能力値
+    delete from power_jyo_motor;
+    
+    insert into power_jyo_motor
+      select 
+        paramYmd,
+        jyocd,
+        motorno, 
+        wakurank, 
+        wakurankcnt,
+        wakurankrate,
+        tmp.cntrank, 
+        tmp.raterank, 
+        ((tmp.cntrank+tmp.raterank) / 2) as totalrank
+      from (
+        select jyocd, motorno, wakurank, wakurankcnt, wakurankrate,
+          ntile(section) over (partition by wakurank order by max(wakurankcnt) desc) as cntrank,
+          ntile(section) over (partition by wakurank order by max(wakurankrate) desc) as raterank
+        from wakurank_jyo_motor
+        group by paramYmd, jyocd, motorno, wakurank, wakurankcnt, wakurankrate
+        ) tmp
+      order by paramYmd, jyocd, motorno, wakurank, wakurankcnt, wakurankrate
+      ;
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS aggregate_wakurank_jyo_motor(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_wakurank_jyo_motor(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    delete from wakurank_jyo_motor;
+    
+    insert into wakurank_jyo_motor
+      select 
+        paramYmd,
+        tmp.jyocd,
+        tmp.motorno, 
+        tmp.wakurank,
+        tmp.wakurankcnt,
+        cast(cast(tmp.wakurankcnt as float) / 
+          cast(
+            case when substring(wakurank from 1 for 1) = '1' then tr.waku1cnt
+                 when substring(wakurank from 1 for 1) = '2' then tr.waku2cnt
+                 when substring(wakurank from 1 for 1) = '3' then tr.waku3cnt
+                 when substring(wakurank from 1 for 1) = '4' then tr.waku4cnt
+                 when substring(wakurank from 1 for 1) = '5' then tr.waku5cnt
+                 when substring(wakurank from 1 for 1) = '6' then tr.waku6cnt
+                 end
+          as float)
+           * 100 as numeric(5,2)) wakurankrate
+      from (
+        select 
+          jyocd,
+          motorno,
+          (waku::text || rank::text) as wakurank,
+          count((waku::text || rank::text)) as wakurankcnt
+        from rec_racer
+        where
+          (ymd > '20130101' and ymd <= paramYmd)
+        group by jyocd, motorno, wakurank
+      ) tmp, 
+        total_jyo_motor tr
+      where tr.motorno = tmp.motorno
+            and tr.jyocd = tmp.jyocd
+      order by paramYmd, jyocd, tmp.motorno
+      ;
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS aggregate_total_jyo_motor(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_total_jyo_motor(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    delete from total_jyo_motor;
+    
+    insert into total_jyo_motor
+      select 
+        paramYmd,
+        jyocd,
+        motorno,
+        racecnt,
+        flyingcnt,
+        latecnt,
+        waku1cnt,
+        waku2cnt,
+        waku3cnt,
+        waku4cnt,
+        waku5cnt,
+        waku6cnt,
+        rank1cnt,
+        rank2cnt,
+        rank3cnt,
+        rank4cnt,
+        rank5cnt,
+        rank6cnt,
+        cast(cast(tmp.rank1cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank1rate,
+        cast(cast(tmp.rank2cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank2rate,
+        cast(cast(tmp.rank3cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank3rate,
+        cast(cast(tmp.rank4cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank4rate,
+        cast(cast(tmp.rank5cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank5rate,
+        cast(cast(tmp.rank6cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank6rate
+      from 
+      ( select 
+            jyocd,
+            motorno,
+            count(entry) racecnt,
+            count(flying) flyingcnt,
+            count(late) latecnt,
+            sum(case when waku = 1 then 1 else 0 end) waku1cnt,
+            sum(case when waku = 2 then 1 else 0 end) waku2cnt,
+            sum(case when waku = 3 then 1 else 0 end) waku3cnt,
+            sum(case when waku = 4 then 1 else 0 end) waku4cnt,
+            sum(case when waku = 5 then 1 else 0 end) waku5cnt,
+            sum(case when waku = 6 then 1 else 0 end) waku6cnt,
+            sum(case when rank = 1 then 1 else 0 end) rank1cnt,
+            sum(case when rank = 2 then 1 else 0 end) rank2cnt,
+            sum(case when rank = 3 then 1 else 0 end) rank3cnt,
+            sum(case when rank = 4 then 1 else 0 end) rank4cnt,
+            sum(case when rank = 5 then 1 else 0 end) rank5cnt,
+            sum(case when rank = 6 then 1 else 0 end) rank6cnt
+          from rec_racer
+          where
+            (ymd > '20130101' and ymd <= paramYmd)
+          group by jyocd, motorno
+          order by jyocd, motorno
+      ) tmp
+    order by paramYmd, jyocd, motorno
+  ;
+
+  END;
+$$ LANGUAGE plpgsql;
+
+
+------------------------
+選手
+------------------------
+DROP FUNCTION IF EXISTS calculate_power_racer_bettype(VARCHAR(8), VARCHAR(3));
+
+CREATE OR REPLACE FUNCTION calculate_power_racer_bettype(paramYmd VARCHAR(8), paramBettype VARCHAR(3))
+RETURNS VOID AS $$
+  BEGIN
+    delete from power_racer_bettype where bettype = paramBettype;
+    
+    IF paramBettype = '1TF' THEN
+      insert into power_racer_bettype
+        select 
+          paramYmd,
+          paramBettype,
+          entry, 
+          substring(wakurank from 1 for 1) waku, 
+          sum(totalrank) / count(totalrank) as powerrank
+        from power_racer
+        where
+          wakurank = any (
+            case 
+                 when substring(wakurank from 1 for 1) = '1' then array['11']
+                 when substring(wakurank from 1 for 1) = '2' then array['21']
+                 when substring(wakurank from 1 for 1) = '3' then array['31']
+                 when substring(wakurank from 1 for 1) = '4' then array['41']
+                 when substring(wakurank from 1 for 1) = '5' then array['51']
+                 when substring(wakurank from 1 for 1) = '6' then array['61']
+            end
+          )
+        group by paramYmd, paramBettype, entry, substring(wakurank from 1 for 1)
+        order by paramYmd, paramBettype, entry, substring(wakurank from 1 for 1);
+    ELSIF paramBettype = '2TF' THEN
+      insert into power_racer_bettype
+        select 
+          paramYmd,
+          paramBettype,
+          entry, 
+          substring(wakurank from 1 for 1) waku, 
+          sum(totalrank) / count(totalrank) as powerrank
+        from power_racer
+        where
+          wakurank = any (
+            case 
+                 when substring(wakurank from 1 for 1) = '1' then array['11']
+                 when substring(wakurank from 1 for 1) = '2' then array['21', '22']
+                 when substring(wakurank from 1 for 1) = '3' then array['31', '32']
+                 when substring(wakurank from 1 for 1) = '4' then array['41', '42']
+                 when substring(wakurank from 1 for 1) = '5' then array['51', '52']
+                 when substring(wakurank from 1 for 1) = '6' then array['61', '62']
+            end
+          )
+        group by paramYmd, paramBettype, entry, substring(wakurank from 1 for 1)
+        order by paramYmd, paramBettype, entry, substring(wakurank from 1 for 1);
+    ELSIF paramBettype = '3TF' THEN
+      insert into power_racer_bettype
+        select 
+          paramYmd,
+          paramBettype,
+          entry, 
+          substring(wakurank from 1 for 1) waku, 
+          sum(totalrank) / count(totalrank) as powerrank
+        from power_racer
+        where
+          wakurank = any (
+            case 
+                 when substring(wakurank from 1 for 1) = '1' then array['11']
+                 when substring(wakurank from 1 for 1) = '2' then array['21', '22']
+                 when substring(wakurank from 1 for 1) = '3' then array['31', '32', '33']
+                 when substring(wakurank from 1 for 1) = '4' then array['41', '42', '43']
+                 when substring(wakurank from 1 for 1) = '5' then array['51', '52', '53']
+                 when substring(wakurank from 1 for 1) = '6' then array['61', '62', '63']
+            end
+          )
+        group by paramYmd, paramBettype, entry, substring(wakurank from 1 for 1)
+        order by paramYmd, paramBettype, entry, substring(wakurank from 1 for 1);
+    END IF;
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS calculate_power_racer(VARCHAR(8), smallint);
+
+CREATE OR REPLACE FUNCTION calculate_power_racer(paramYmd VARCHAR(8), section smallint)
+RETURNS VOID AS $$
+  BEGIN
+    -- 選手毎の枠→能力値
+    delete from power_racer;
+    
+    insert into power_racer
+      select 
+        paramYmd,
+        entry, 
+        wakurank, 
+        wakurankcnt,
+        wakurankrate,
+        tmp.cntrank, 
+        tmp.raterank, 
+        ((tmp.cntrank+tmp.raterank) / 2) as totalrank
+      from (
+        select entry, wakurank, wakurankcnt, wakurankrate,
+          ntile(section) over (partition by wakurank order by max(wakurankcnt) desc) as cntrank,
+          ntile(section) over (partition by wakurank order by max(wakurankrate) desc) as raterank
+        from wakurank_racer
+        group by paramYmd, entry, wakurank, wakurankcnt, wakurankrate
+        ) tmp
+      order by paramYmd, entry, wakurank, wakurankcnt, wakurankrate
+    ;
+      
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS aggregate_wakurank_racer(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_wakurank_racer(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    delete from wakurank_racer;
+    
+    insert into wakurank_racer
+      select 
+        paramYmd,
+        tmp.entry, 
+        tmp.wakurank,
+        tmp.wakurankcnt,
+        cast(cast(tmp.wakurankcnt as float) / 
+          cast(
+            case when substring(wakurank from 1 for 1) = '1' then tr.waku1cnt
+                 when substring(wakurank from 1 for 1) = '2' then tr.waku2cnt
+                 when substring(wakurank from 1 for 1) = '3' then tr.waku3cnt
+                 when substring(wakurank from 1 for 1) = '4' then tr.waku4cnt
+                 when substring(wakurank from 1 for 1) = '5' then tr.waku5cnt
+                 when substring(wakurank from 1 for 1) = '6' then tr.waku6cnt
+                 end
+          as float)
+           * 100 as numeric(5,2)) wakurankrate
+      from (
+        select 
+          entry,
+          (waku::text || rank::text) as wakurank,
+          count((waku::text || rank::text)) as wakurankcnt
+        from rec_racer
+        where
+          (ymd > '20090101' and ymd <= paramYmd)
+        group by entry, wakurank
+      ) tmp, 
+        total_racer tr
+      where tr.entry = tmp.entry
+      order by paramYmd, tmp.entry
+      ;
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------------
+DROP FUNCTION IF EXISTS aggregate_total_racer(VARCHAR(8));
+
+CREATE OR REPLACE FUNCTION aggregate_total_racer(paramYmd VARCHAR(8))
+RETURNS VOID AS $$
+  BEGIN
+    delete from total_racer;
+    
+    insert into total_racer
+      select 
+        paramYmd,
+        entry,
+        racecnt,
+        flyingcnt,
+        latecnt,
+        waku1cnt,
+        waku2cnt,
+        waku3cnt,
+        waku4cnt,
+        waku5cnt,
+        waku6cnt,
+        rank1cnt,
+        rank2cnt,
+        rank3cnt,
+        rank4cnt,
+        rank5cnt,
+        rank6cnt,
+        cast(cast(tmp.rank1cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank1rate,
+        cast(cast(tmp.rank2cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank2rate,
+        cast(cast(tmp.rank3cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank3rate,
+        cast(cast(tmp.rank4cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank4rate,
+        cast(cast(tmp.rank5cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank5rate,
+        cast(cast(tmp.rank6cnt as float) / cast(racecnt as float) * 100 as numeric(5,2))  rank6rate
+      from 
+      ( select 
+            entry,
+            count(entry) racecnt,
+            count(flying) flyingcnt,
+            count(late) latecnt,
+            sum(case when waku = 1 then 1 else 0 end) waku1cnt,
+            sum(case when waku = 2 then 1 else 0 end) waku2cnt,
+            sum(case when waku = 3 then 1 else 0 end) waku3cnt,
+            sum(case when waku = 4 then 1 else 0 end) waku4cnt,
+            sum(case when waku = 5 then 1 else 0 end) waku5cnt,
+            sum(case when waku = 6 then 1 else 0 end) waku6cnt,
+            sum(case when rank = 1 then 1 else 0 end) rank1cnt,
+            sum(case when rank = 2 then 1 else 0 end) rank2cnt,
+            sum(case when rank = 3 then 1 else 0 end) rank3cnt,
+            sum(case when rank = 4 then 1 else 0 end) rank4cnt,
+            sum(case when rank = 5 then 1 else 0 end) rank5cnt,
+            sum(case when rank = 6 then 1 else 0 end) rank6cnt
+          from rec_racer
+          where
+            (ymd > '20090101' and ymd <= paramYmd)
+          group by entry
+          order by entry
+      ) tmp
+    order by entry
+  ;
+
+  END;
+$$ LANGUAGE plpgsql;
+
+------------------
+https://qiita.com/SRsawaguchi/items/411801e254ee66f511f1
+
+
