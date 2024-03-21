@@ -14,7 +14,7 @@ set exno_list=%1
 
 set starttime=%date%_%time%
 
-java -Xmx16000m ^
+java -Xmx32000m ^
   -cp %CP% com.pengkong.boatrace.exp10.MLArffGenerator %PROPERTIES% %exno_list% 
 
 set endtime=%date%_%time%
